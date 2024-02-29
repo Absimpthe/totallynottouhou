@@ -8,12 +8,12 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 
 		// Set the window size
-		config.setWindowedMode(1280, 720); // Example size, change as needed
+		config.setWindowedMode(1280, 720);
 
 		// Disable window resizing
 		config.setResizable(false);
 		config.setTitle("Aquamarine");
 		// Create and start the application
-		new Lwjgl3Application(new totallynottouhou(), config); // Replace 'MainClass' with your game's main class
+		new Lwjgl3Application(new totallynottouhou(), config);
 	}
 }

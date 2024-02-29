@@ -9,17 +9,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 public class MainMenu implements Screen {
 
     private static final int FRAME_COLS = 7, FRAME_ROWS = 11;
     private Stage stage;
     private Skin skin;
+    private Label titleLabel;
 
-    Animation<TextureRegion> animation; // Must declare frame type (TextureRegion)
+    Animation<TextureRegion> animation;
     Texture sheet;
     float stateTime;
     SpriteBatch batch;
@@ -56,7 +59,6 @@ public class MainMenu implements Screen {
         TextButton startButton = new TextButton("Start", skin);
         startButton.setSize(200, 100); // Set the size of the button
         startButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 50); // Center the button
-
         // Add a ClickListener to the button
         startButton.addListener(new ClickListener() {
             @Override
@@ -65,9 +67,16 @@ public class MainMenu implements Screen {
                 //TBA
             }
         });
-
         stage.addActor(startButton); // Add the button to the stage
-
+        // Create a LabelStyle
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("title");
+        // Initialize the Label
+        titleLabel = new Label("Aquamarine", labelStyle);
+        titleLabel.setSize(300, 100);
+        titleLabel.setPosition(Gdx.graphics.getWidth() / 2 - titleLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 100); // Position it above the start button
+        titleLabel.setAlignment(Align.center); // Center the text
+        stage.addActor(titleLabel); // Add the label to the stage
     }
     @Override
     public void render(float delta) {
@@ -111,8 +120,8 @@ public class MainMenu implements Screen {
     @Override
     public void dispose() {
         // Dispose of assets when done
-        if (batch != null) batch.dispose(); // Dispose of the SpriteBatch
-        if (sheet != null) sheet.dispose(); // Dispose of the Texture
-        if (stage != null) stage.dispose(); // Dispose of the Stage
+        if (batch != null) batch.dispose();
+        if (sheet != null) sheet.dispose();
+        if (stage != null) stage.dispose();
     }
 }
