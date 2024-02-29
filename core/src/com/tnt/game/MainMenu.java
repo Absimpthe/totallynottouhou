@@ -63,11 +63,23 @@ public class MainMenu implements Screen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Handle the button click, switch to the game screen or do something else
-                //TBA
+                // Handle the button click
             }
         });
         stage.addActor(startButton); // Add the button to the stage
+
+        TextButton volumeButton = new TextButton("Volume", skin);
+        volumeButton.setSize(200, 100); // Set the size of the button
+        // Set the position below the Start button with some margin
+        volumeButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 160);
+        volumeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Handle the button click
+            }
+        });
+        stage.addActor(volumeButton);
+
         // Create a LabelStyle
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = skin.getFont("title");
