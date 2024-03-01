@@ -12,8 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.audio.Music;
 
 public class MainMenu implements Screen {
 
@@ -21,7 +25,7 @@ public class MainMenu implements Screen {
     private Stage stage;
     private Skin skin;
     private Label titleLabel;
-
+    private Music mainmenuBGM;
     Animation<TextureRegion> animation;
     Texture sheet;
     float stateTime;
@@ -68,17 +72,30 @@ public class MainMenu implements Screen {
         });
         stage.addActor(startButton); // Add the button to the stage
 
-        TextButton volumeButton = new TextButton("Volume", skin);
-        volumeButton.setSize(200, 100); // Set the size of the button
+        TextButton quitButton = new TextButton("Quit", skin);
+        quitButton.setSize(200, 100); // Set the size of the button
         // Set the position below the Start button with some margin
-        volumeButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 160);
-        volumeButton.addListener(new ClickListener() {
+        quitButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 160);
+        quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Handle the button click
             }
         });
-        stage.addActor(volumeButton);
+        stage.addActor(quitButton);
+
+        Texture gearIconTexture = new Texture(Gdx.files.internal("settingsicon.png"));
+        Drawable gearIconDrawable = new TextureRegionDrawable(new TextureRegion(gearIconTexture));
+        ImageButton settingsButton = new ImageButton(gearIconDrawable);
+        settingsButton.setSize(100, 100);
+        settingsButton.setPosition(Gdx.graphics.getWidth() - settingsButton.getWidth() - 15, Gdx.graphics.getHeight() - settingsButton.getHeight() - 20); // Position in the top right corner
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Handle the button click
+            }
+        });
+        stage.addActor(settingsButton);
 
         // Create a LabelStyle
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -89,6 +106,12 @@ public class MainMenu implements Screen {
         titleLabel.setPosition(Gdx.graphics.getWidth() / 2 - titleLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 100); // Position it above the start button
         titleLabel.setAlignment(Align.center); // Center the text
         stage.addActor(titleLabel); // Add the label to the stage
+
+        // Load and play the background music
+        mainmenuBGM = Gdx.audio.newMusic(Gdx.files.internal("mainmenubgm.mp3"));
+        mainmenuBGM.setLooping(true);
+        mainmenuBGM.setVolume(0.5f);
+        mainmenuBGM.play();
     }
     @Override
     public void render(float delta) {
@@ -127,7 +150,7 @@ public class MainMenu implements Screen {
     }
     @Override
     public void hide() {
-
+        mainmenuBGM.stop();
     }
     @Override
     public void dispose() {
@@ -135,5 +158,6 @@ public class MainMenu implements Screen {
         if (batch != null) batch.dispose();
         if (sheet != null) sheet.dispose();
         if (stage != null) stage.dispose();
+        if (mainmenuBGM != null) mainmenuBGM.dispose();
     }
 }
