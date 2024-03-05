@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.audio.Music;
 
 public class MainMenu implements Screen {
-
+    private aquamarine game;
     private static final int FRAME_COLS = 7, FRAME_ROWS = 11;
     private Stage stage;
     private Skin skin;
@@ -31,6 +31,7 @@ public class MainMenu implements Screen {
     float stateTime;
     SpriteBatch batch;
     public MainMenu(aquamarine game) {
+        this.game = game;
         // Load the sprite sheet as a Texture
         sheet = new Texture(Gdx.files.internal("mainmenubgframes.png"));
 
@@ -67,7 +68,7 @@ public class MainMenu implements Screen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Handle the button click
+                game.setScreen(new Level(game));
             }
         });
         stage.addActor(startButton); // Add the button to the stage
