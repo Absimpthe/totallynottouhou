@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.audio.Music;
 
 public class MainMenu implements Screen {
-    private aquamarine game;
+    private final aquamarine game;
     private static final int FRAME_COLS = 7, FRAME_ROWS = 11;
     private Stage stage;
     private Skin skin;
