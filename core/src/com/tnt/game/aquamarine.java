@@ -2,7 +2,7 @@ package com.tnt.game;
 
 import com.badlogic.gdx.Game;
 
-public class totallynottouhou extends Game {
+public class aquamarine extends Game {
 
 	@Override
 	public void create() {

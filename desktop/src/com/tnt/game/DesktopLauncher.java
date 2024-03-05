@@ -14,6 +14,6 @@ public class DesktopLauncher {
 		config.setResizable(false);
 		config.setTitle("Aquamarine");
 		// Create and start the application
-		new Lwjgl3Application(new totallynottouhou(), config);
+		new Lwjgl3Application(new aquamarine(), config);
 	}
 }

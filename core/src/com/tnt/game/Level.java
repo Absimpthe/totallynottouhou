@@ -2,9 +2,9 @@ package com.tnt.game;
 import com.badlogic.gdx.Screen;
 
 public class Level implements Screen {
-    private totallynottouhou game;
+    private aquamarine game;
 
-    public Level(totallynottouhou game) {
+    public Level(aquamarine game) {
         this.game = game;
 
     }

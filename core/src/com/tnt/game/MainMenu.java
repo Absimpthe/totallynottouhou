@@ -30,7 +30,7 @@ public class MainMenu implements Screen {
     Texture sheet;
     float stateTime;
     SpriteBatch batch;
-    public MainMenu(totallynottouhou game) {
+    public MainMenu(aquamarine game) {
         // Load the sprite sheet as a Texture
         sheet = new Texture(Gdx.files.internal("mainmenubgframes.png"));
 
