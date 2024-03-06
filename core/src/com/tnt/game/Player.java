@@ -61,7 +61,7 @@ public class Player {
     private void shootProjectile() {
         // Adjust the starting X position. DO NOT CHANGE THE VALUES HERE OR THEY WILL SPAWN AT THE WRONG POSITION
         Vector2 projectilePosition = new Vector2(playerSprite.getX() + 500f + (playerSprite.getWidth() * playerSprite.getScaleX()),
-                playerSprite.getY() + 171f + (playerSprite.getHeight() * playerSprite.getScaleY()) / 2);
+                playerSprite.getY() + 172f + (playerSprite.getHeight() * playerSprite.getScaleY()) / 2);
         Vector2 projectileVelocity = new Vector2(400f, 0);
         PlayerProjectile newProjectile = new PlayerProjectile(projectilePosition, projectileVelocity, projectileTexture);
         projectiles.add(newProjectile);

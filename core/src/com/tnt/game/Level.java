@@ -8,11 +8,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.audio.Music;
 
 public class Level implements Screen {
     private final aquamarine game;
     private SpriteBatch batch;
     private Texture bgtexture;
+    private Music levelbgm;
     Animation<TextureRegion> animation;
     private static final int FRAME_COLS = 7, FRAME_ROWS = 11;
     float stateTime;
@@ -38,7 +40,10 @@ public class Level implements Screen {
     }
     @Override
     public void show() {
-
+        levelbgm = Gdx.audio.newMusic(Gdx.files.internal("levelBGM.mp3"));
+        levelbgm.setLooping(true);
+        levelbgm.setVolume(0.5f);
+        levelbgm.play();
     }
     @Override
     public void render(float delta) {
