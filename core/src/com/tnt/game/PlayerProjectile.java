@@ -1,47 +1,46 @@
 package com.tnt.game;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Rectangle;
 
 public class PlayerProjectile {
-    private Vector2 position; // Position of the projectile on the screen
     private Vector2 velocity; // Speed and direction of the projectile's movement
-    private Texture texture; // Texture of the projectile
+    private Sprite sprite; // Sprite for the projectile
     private Rectangle bounds; // Used for collision detection
 
-    // Constructor to initialize the projectile with its position, velocity, and texture
     public PlayerProjectile(Vector2 position, Vector2 velocity, Texture texture) {
-        this.position = position;
         this.velocity = velocity;
-        this.texture = texture; // Assign the texture passed from outside
-        // Initialize the bounds rectangle for collision detection, assuming the texture is already loaded
-        this.bounds = new Rectangle(position.x, position.y, texture.getWidth(), texture.getHeight());
+        this.sprite = new Sprite(texture); // Create a sprite from the texture
+        this.sprite.setPosition(position.x, position.y); // Set the sprite's position
+        this.sprite.setScale(2.0f); // Scale the sprite (e.g., 2x size)
+
+        // Initialize the bounds rectangle for collision detection, adjusted for the sprite's scale
+        this.bounds = new Rectangle(sprite.getX(), sprite.getY(), sprite.getWidth() * sprite.getScaleX(), sprite.getHeight() * sprite.getScaleY());
     }
 
-    // Update method to be called every frame, updates the projectile's position
     public void updateProjectile(float deltaTime) {
-        // Adjust the position based on the velocity and the time passed since the last frame
-        position.add(velocity.x * deltaTime, velocity.y * deltaTime);
+        // Adjust the sprite's position based on the velocity and the time passed since the last frame
+        sprite.setPosition(sprite.getX() + velocity.x * deltaTime, sprite.getY() + velocity.y * deltaTime);
         // Update the bounds position as well to match the new position
-        bounds.setPosition(position.x, position.y);
+        bounds.setPosition(sprite.getX(), sprite.getY());
     }
 
-    // Draw method to render the projectile on the screen
     public void draw(SpriteBatch batch) {
-        // Draw the texture at the projectile's current position
-        batch.draw(texture, position.x, position.y);
+        sprite.draw(batch); // Draw the sprite with its current scale
     }
 
-    // Getter method for the bounds, used for collision detection
     public Rectangle getBounds() {
         return bounds;
     }
 
     public Vector2 getPosition() {
-        return position;
+        return new Vector2(sprite.getX(), sprite.getY());
     }
 
-    // Dispose method not needed if texture is managed outside this class
+    public void dispose() {
+
+    }
 }
