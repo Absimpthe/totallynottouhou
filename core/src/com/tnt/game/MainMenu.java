@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -61,18 +62,36 @@ public class MainMenu implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage); // Set input processor
         skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
+
+        /*---------------
+        create "Start" button
+        --------------- */
         TextButton startButton = new TextButton("Start", skin);
         startButton.setSize(200, 100); // Set the size of the button
         startButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 50); // Center the button
-        // Add a ClickListener to the button
+        startButton.setScale(1);  // Set the initial scale to 1 (100%)
+
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Level(game));
+                // Sequence of actions: press down, release, then change screen
+                startButton.addAction(Actions.sequence(
+                    Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
+                    Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
+                    Actions.run(new Runnable() {      // Change screen
+                        @Override
+                        public void run() {
+                            game.setScreen(new Level(game));
+                        }
+                    })
+                ));
             }
         });
         stage.addActor(startButton); // Add the button to the stage
 
+        /*---------------
+        create "Quit" button
+        --------------- */
         TextButton quitButton = new TextButton("Quit", skin);
         quitButton.setSize(200, 100); // Set the size of the button
         // Set the position below the Start button with some margin
@@ -80,11 +99,24 @@ public class MainMenu implements Screen {
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Handle the button click
+                // Sequence of actions: press down, release, then change screen
+                startButton.addAction(Actions.sequence(
+                    Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
+                    Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
+                    Actions.run(new Runnable() {      // Change screen
+                        @Override
+                        public void run() {
+                            // handle the button click
+                        }
+                    })
+                ));
             }
         });
         stage.addActor(quitButton);
-
+        
+        /*---------------
+        create "Setting" button
+        --------------- */
         Texture gearIconTexture = new Texture(Gdx.files.internal("settingsicon.png"));
         Drawable gearIconDrawable = new TextureRegionDrawable(new TextureRegion(gearIconTexture));
         ImageButton settingsButton = new ImageButton(gearIconDrawable);
@@ -97,8 +129,10 @@ public class MainMenu implements Screen {
             }
         });
         stage.addActor(settingsButton);
-
-        // Create a LabelStyle
+        
+        /*---------------
+        Create a LabelStyle
+        --------------- */
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = skin.getFont("title");
         // Initialize the Label
@@ -108,12 +142,15 @@ public class MainMenu implements Screen {
         titleLabel.setAlignment(Align.center); // Center the text
         stage.addActor(titleLabel); // Add the label to the stage
 
-        // Load and play the background music
+        /*---------------
+        Load and play the background music
+        --------------- */
         mainmenuBGM = Gdx.audio.newMusic(Gdx.files.internal("mainmenubgm.mp3"));
         mainmenuBGM.setLooping(true);
         mainmenuBGM.setVolume(0.5f);
         mainmenuBGM.play();
     }
+    
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
