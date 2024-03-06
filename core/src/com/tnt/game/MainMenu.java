@@ -27,10 +27,16 @@ public class MainMenu implements Screen {
     private Skin skin;
     private Label titleLabel;
     private Music mainmenuBGM;
+    private Music shootingSound; 
     Animation<TextureRegion> animation;
     Texture sheet;
     float stateTime;
     SpriteBatch batch;
+
+    // Toggle flags for music and sound effects
+    private boolean isMusicOn = true;
+    private boolean isSoundOn = true;
+
     public MainMenu(aquamarine game) {
         this.game = game;
         // Load the sprite sheet as a Texture
@@ -63,12 +69,25 @@ public class MainMenu implements Screen {
         Gdx.input.setInputProcessor(stage); // Set input processor
         skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
 
+        // Create a LabelStyle
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+
+        /*---------------
+        Initialize the Label
+        --------------- */
+        labelStyle.font = skin.getFont("title");
+        titleLabel = new Label("Aquamarine", labelStyle);
+        titleLabel.setSize(500, 100);
+        titleLabel.setPosition(Gdx.graphics.getWidth() / 2 - titleLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 160); // Position it above the start button
+        titleLabel.setAlignment(Align.center); // Center the text
+        stage.addActor(titleLabel); // Add the label to the stage
+
         /*---------------
         create "Start" button
         --------------- */
         TextButton startButton = new TextButton("Start", skin);
-        startButton.setSize(200, 100); // Set the size of the button
-        startButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 50); // Center the button
+        startButton.setSize(350, 100); // Set the size of the button
+        startButton.setPosition(Gdx.graphics.getWidth() / 2 - startButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 40); // Center the button
         startButton.setScale(1);  // Set the initial scale to 1 (100%)
 
         startButton.addListener(new ClickListener() {
@@ -90,71 +109,30 @@ public class MainMenu implements Screen {
         stage.addActor(startButton); // Add the button to the stage
 
         /*---------------
-        create "Quit" button
+        create "Instruction" button
         --------------- */
-        TextButton quitButton = new TextButton("Quit", skin);
-        quitButton.setSize(200, 100); // Set the size of the button
+        TextButton instructionButton = new TextButton("How To Play", skin);
+        instructionButton.setSize(350, 100); // Set the size of the button
         // Set the position below the Start button with some margin
-        quitButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 160);
-        quitButton.setScale(1);  // Set the initial scale to 1 (100%)
-        quitButton.addListener(new ClickListener() {
+        instructionButton.setPosition(Gdx.graphics.getWidth() / 2 - instructionButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 70);
+        instructionButton.setScale(1);  // Set the initial scale to 1 (100%)
+        instructionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Sequence of actions: press down, release, then change screen
-                quitButton.addAction(Actions.sequence(
+                instructionButton.addAction(Actions.sequence(
                     Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
                     Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
                     Actions.run(new Runnable() {      // Change screen
                         @Override
                         public void run() {
-                            game.setScreen(new Level(game));
+                            // game.setScreen(new Level(game));
                         }
                     })
                 ));
             }
         });
-        stage.addActor(quitButton);
-        
-        /*---------------
-        create "Setting" button
-        --------------- */
-        // TextButton settingsButton = new TextButton("settings", skin);
-        Texture gearIconTexture = new Texture(Gdx.files.internal("settingsicon.png"));
-        Drawable gearIconDrawable = new TextureRegionDrawable(new TextureRegion(gearIconTexture));
-        ImageButton settingsButton = new ImageButton(gearIconDrawable);
-        settingsButton.setSize(200, 100); // Set the size of the button
-        // Set the position below the Start button with some margin
-        settingsButton.setPosition(Gdx.graphics.getWidth() - settingsButton.getWidth() - 15, Gdx.graphics.getHeight() - settingsButton.getHeight() - 20); // Position in the top right corner
-        settingsButton.setScale(1);  // Set the initial scale to 1 (100%)
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // Sequence of actions: press down, release, then change screen
-                settingsButton.addAction(Actions.sequence(
-                    Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
-                    Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
-                    Actions.run(new Runnable() {      // Change screen
-                        @Override
-                        public void run() {
-                            game.setScreen(new Level(game));
-                        }
-                    })
-                ));
-            }
-        });
-        stage.addActor(settingsButton);
-        
-        /*---------------
-        Create a LabelStyle
-        --------------- */
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = skin.getFont("title");
-        // Initialize the Label
-        titleLabel = new Label("Aquamarine", labelStyle);
-        titleLabel.setSize(300, 100);
-        titleLabel.setPosition(Gdx.graphics.getWidth() / 2 - titleLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 100); // Position it above the start button
-        titleLabel.setAlignment(Align.center); // Center the text
-        stage.addActor(titleLabel); // Add the label to the stage
+        stage.addActor(instructionButton);
 
         /*---------------
         Load and play the background music
@@ -163,6 +141,56 @@ public class MainMenu implements Screen {
         mainmenuBGM.setLooping(true);
         mainmenuBGM.setVolume(0.5f);
         mainmenuBGM.play();
+
+        /*---------------
+        Load and play the sound effect
+        --------------- */
+        // source: https://pixabay.com/sound-effects/search/gun/
+        shootingSound = Gdx.audio.newMusic(Gdx.files.internal("shootingsound.mp3"));
+        shootingSound.setLooping(true);
+        shootingSound.setVolume(0.5f);
+        shootingSound.play();
+
+        /*---------------
+        Create and position music button
+        --------------- */
+        TextButton musicButton = new TextButton(isMusicOn ? "Music: On" : "Music: Off", skin);
+        musicButton.setSize(350, 100);
+        musicButton.setPosition(Gdx.graphics.getWidth() / 2 - musicButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 180);
+        // musicButton.setScale(0.2f, 0.2f); 
+        musicButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isMusicOn = !isMusicOn; // Toggle music state
+                musicButton.setText(isMusicOn ? "Music On" : "Music Off");
+                if (isMusicOn) {
+                    mainmenuBGM.play(); // Resume music
+                } else {
+                    mainmenuBGM.pause(); // Pause music
+                }
+            }
+        });
+        stage.addActor(musicButton);
+
+        /*---------------
+        Create and position sound effect buttons
+        --------------- */
+        TextButton soundButton = new TextButton(isSoundOn ? "Sound: On" : "Sound: Off", skin);
+        soundButton.setSize(350,100);
+        soundButton.setPosition(Gdx.graphics.getWidth() / 2 - soundButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 290);
+        soundButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isSoundOn = !isSoundOn; // Toggle sound state
+                soundButton.setText(isSoundOn ? "Sound On" : "Sound Off");
+                if (isSoundOn) {
+                    shootingSound.play(); // Resume sound effect
+                } else {
+                    shootingSound.pause(); // Pause sound effect
+                }
+            }
+        });
+        stage.addActor(soundButton);
     }
 
     @Override
@@ -214,3 +242,4 @@ public class MainMenu implements Screen {
         if (mainmenuBGM != null) mainmenuBGM.dispose();
     }
 }
+
