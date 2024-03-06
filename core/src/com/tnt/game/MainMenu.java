@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -96,17 +98,18 @@ public class MainMenu implements Screen {
         quitButton.setSize(200, 100); // Set the size of the button
         // Set the position below the Start button with some margin
         quitButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - 160);
+        quitButton.setScale(1);  // Set the initial scale to 1 (100%)
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Sequence of actions: press down, release, then change screen
-                startButton.addAction(Actions.sequence(
+                quitButton.addAction(Actions.sequence(
                     Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
                     Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
                     Actions.run(new Runnable() {      // Change screen
                         @Override
                         public void run() {
-                            // handle the button click
+                            game.setScreen(new Level(game));
                         }
                     })
                 ));
@@ -117,15 +120,28 @@ public class MainMenu implements Screen {
         /*---------------
         create "Setting" button
         --------------- */
+        // TextButton settingsButton = new TextButton("settings", skin);
         Texture gearIconTexture = new Texture(Gdx.files.internal("settingsicon.png"));
         Drawable gearIconDrawable = new TextureRegionDrawable(new TextureRegion(gearIconTexture));
         ImageButton settingsButton = new ImageButton(gearIconDrawable);
-        settingsButton.setSize(100, 100);
+        settingsButton.setSize(200, 100); // Set the size of the button
+        // Set the position below the Start button with some margin
         settingsButton.setPosition(Gdx.graphics.getWidth() - settingsButton.getWidth() - 15, Gdx.graphics.getHeight() - settingsButton.getHeight() - 20); // Position in the top right corner
+        settingsButton.setScale(1);  // Set the initial scale to 1 (100%)
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Handle the button click
+                // Sequence of actions: press down, release, then change screen
+                settingsButton.addAction(Actions.sequence(
+                    Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
+                    Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
+                    Actions.run(new Runnable() {      // Change screen
+                        @Override
+                        public void run() {
+                            game.setScreen(new Level(game));
+                        }
+                    })
+                ));
             }
         });
         stage.addActor(settingsButton);
@@ -150,7 +166,7 @@ public class MainMenu implements Screen {
         mainmenuBGM.setVolume(0.5f);
         mainmenuBGM.play();
     }
-    
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -174,6 +190,7 @@ public class MainMenu implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw(); // Draw the stage and its actors
     }
+
     @Override
     public void resize(int width, int height) {
 
