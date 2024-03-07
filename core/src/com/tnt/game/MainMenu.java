@@ -27,15 +27,14 @@ public class MainMenu implements Screen {
     private Skin skin;
     private Label titleLabel;
     private Music mainmenuBGM;
-    private Music shootingSound; 
     Animation<TextureRegion> animation;
     Texture sheet;
     float stateTime;
     SpriteBatch batch;
 
     // Toggle flags for music and sound effects
-    private boolean isMusicOn = true;
-    private boolean isSoundOn = true;
+    public static boolean isMusicOn = true;
+    public static boolean isSoundOn = true;
 
     public MainMenu(aquamarine game) {
         this.game = game;
@@ -143,15 +142,6 @@ public class MainMenu implements Screen {
         mainmenuBGM.play();
 
         /*---------------
-        Load and play the sound effect
-        --------------- */
-        // source: https://pixabay.com/sound-effects/search/gun/
-        shootingSound = Gdx.audio.newMusic(Gdx.files.internal("shootingsound.mp3"));
-        shootingSound.setLooping(true);
-        shootingSound.setVolume(0.5f);
-        shootingSound.play();
-
-        /*---------------
         Create and position music button
         --------------- */
         TextButton musicButton = new TextButton(isMusicOn ? "Music: On" : "Music: Off", skin);
@@ -171,7 +161,7 @@ public class MainMenu implements Screen {
             }
         });
         stage.addActor(musicButton);
-
+        
         /*---------------
         Create and position sound effect buttons
         --------------- */
@@ -183,11 +173,6 @@ public class MainMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 isSoundOn = !isSoundOn; // Toggle sound state
                 soundButton.setText(isSoundOn ? "Sound On" : "Sound Off");
-                if (isSoundOn) {
-                    shootingSound.play(); // Resume sound effect
-                } else {
-                    shootingSound.pause(); // Pause sound effect
-                }
             }
         });
         stage.addActor(soundButton);

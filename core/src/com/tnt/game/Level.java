@@ -14,6 +14,8 @@ public class Level implements Screen {
     private Music levelbgm;
     private Parallax ParallaxBG;
     private Player player;
+    private Music shootingSound; 
+
     public Level(aquamarine game) {
         this.game = game;
         // Load the sprite
@@ -23,12 +25,35 @@ public class Level implements Screen {
     }
     @Override
     public void show() {
-        // Play background music
+        /*---------------
+        Load and play background music
+        --------------- */
         levelbgm = Gdx.audio.newMusic(Gdx.files.internal("levelBGM.mp3"));
         levelbgm.setLooping(true);
         levelbgm.setVolume(0.5f);
-        levelbgm.play();
-        // Initialize parallax background
+        if (MainMenu.isMusicOn) {
+            levelbgm.play(); // Resume sound effect
+        } else {
+            levelbgm.pause(); // Pause sound effect
+        }
+
+        /*---------------
+        Load and play the sound effect
+        --------------- */
+        shootingSound = Gdx.audio.newMusic(Gdx.files.internal("shootingsound.mp3"));
+        shootingSound.setLooping(true);
+        shootingSound.setVolume(0.5f);
+        shootingSound.play();
+
+        if (MainMenu.isSoundOn) {
+            shootingSound.play(); // Resume sound effect
+        } else {
+            shootingSound.pause(); // Pause sound effect
+        }
+
+        /*---------------
+        Initialize parallax background
+        --------------- */
         bgbatch = new SpriteBatch();
         ParallaxBG = new Parallax();
         ParallaxBG.addLayer(new Texture("far.png"), 30f); // Farthest layer
