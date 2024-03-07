@@ -1,16 +1,12 @@
 package com.tnt.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.audio.Music;
 
 public class Player {
     private Sprite playerSprite;
@@ -19,6 +15,7 @@ public class Player {
     private Texture projectileTexture;
     private float shootTimer;
     private float shootInterval = 0.25f; // Time in seconds between shots
+    private Sound shootingSound;
 
     public Player(String textureFileName) {
         this.playerTexture = new Texture(Gdx.files.internal(textureFileName));
@@ -29,6 +26,7 @@ public class Player {
         this.projectiles = new Array<>();
         this.shootTimer = 0;
         this.projectileTexture = new Texture(Gdx.files.internal("playerprojectile.png"));
+        this.shootingSound = Gdx.audio.newSound(Gdx.files.internal("shootingsound.wav"));
     }
 
     public void update(float deltaTime) {
@@ -70,6 +68,9 @@ public class Player {
         Vector2 projectileVelocity = new Vector2(400f, 0);
         PlayerProjectile newProjectile = new PlayerProjectile(projectilePosition, projectileVelocity, projectileTexture);
         projectiles.add(newProjectile);
+        if (MainMenu.isSFXEnabled()) {
+            shootingSound.play(0.1f);
+        }
     }
     public void draw(SpriteBatch batch) {
         playerSprite.draw(batch);
@@ -81,19 +82,6 @@ public class Player {
     public void dispose() {
         playerTexture.dispose();
         projectileTexture.dispose();
-    }
-
-    // Getter for player's position if needed by the projectile manager
-    public Vector2 getPosition() {
-        return new Vector2(playerSprite.getX(), playerSprite.getY());
-    }
-
-    // Getter for player's sprite width and height if needed
-    public float getWidth() {
-        return playerSprite.getWidth();
-    }
-
-    public float getHeight() {
-        return playerSprite.getHeight();
+        shootingSound.dispose();
     }
 }

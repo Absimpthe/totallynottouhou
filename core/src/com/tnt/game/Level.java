@@ -14,7 +14,6 @@ public class Level implements Screen {
     private Music levelbgm;
     private Parallax ParallaxBG;
     private Player player;
-    private Music shootingSound; 
 
     public Level(aquamarine game) {
         this.game = game;
@@ -32,23 +31,9 @@ public class Level implements Screen {
         levelbgm.setLooping(true);
         levelbgm.setVolume(0.5f);
         if (MainMenu.isMusicOn) {
-            levelbgm.play(); // Resume sound effect
+            levelbgm.play(); // Resume background music
         } else {
-            levelbgm.pause(); // Pause sound effect
-        }
-
-        /*---------------
-        Load and play the sound effect
-        --------------- */
-        shootingSound = Gdx.audio.newMusic(Gdx.files.internal("shootingsound.mp3"));
-        shootingSound.setLooping(true);
-        shootingSound.setVolume(0.5f);
-        shootingSound.play();
-
-        if (MainMenu.isSoundOn) {
-            shootingSound.play(); // Resume sound effect
-        } else {
-            shootingSound.pause(); // Pause sound effect
+            levelbgm.pause(); // Pause background music
         }
 
         /*---------------
