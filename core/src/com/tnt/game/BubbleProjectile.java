@@ -3,24 +3,25 @@ package com.tnt.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Rectangle;
 
-public class PlayerProjectile {
+public class BubbleProjectile {
     private Vector2 velocity; // Speed and direction of the projectile's movement
     private Sprite sprite; // Sprite for the projectile
-    private Rectangle bounds; // Used for collision detection
+    private Circle bounds; // Used for collision detection
 
-    public PlayerProjectile(Vector2 position, Vector2 velocity, Texture texture) {
+    public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture) {
         this.velocity = velocity;
         this.sprite = new Sprite(texture); // Create a sprite from the texture
         this.sprite.setPosition(position.x, position.y); // Set the sprite's position
-        this.sprite.setScale(2.0f); // Scale the sprite
+        this.sprite.setScale(0.1f); // Scale the sprite
 
         // Initialize the bounds rectangle for collision detection, adjusted for the sprite's scale
-        this.bounds = new Rectangle(sprite.getX(), sprite.getY(), sprite.getWidth() * sprite.getScaleX(), sprite.getHeight() * sprite.getScaleY());
+        this.bounds = new Circle(sprite.getX() + sprite.getWidth() / 2 * sprite.getScaleX(),
+                sprite.getY() + sprite.getHeight() / 2 * sprite.getScaleY(),
+                sprite.getWidth() / 2 * sprite.getScaleX());
     }
-
     public void updateProjectile(float deltaTime) {
         // Adjust the sprite's position based on the velocity and the time passed since the last frame
         sprite.setPosition(sprite.getX() + velocity.x * deltaTime, sprite.getY() + velocity.y * deltaTime);
@@ -32,7 +33,7 @@ public class PlayerProjectile {
         sprite.draw(batch); // Draw the sprite with its current scale
     }
 
-    public Rectangle getBounds() {
+    public Circle getBounds() {
         return bounds;
     }
 

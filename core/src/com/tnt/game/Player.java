@@ -14,7 +14,7 @@ public class Player {
     private Array<PlayerProjectile> projectiles;
     private Texture projectileTexture;
     private float shootTimer;
-    private float shootInterval = 0.25f; // Time in seconds between shots
+    private float shootInterval = 0.5f; // Time in seconds between shots
     private Sound shootingSound;
 
     public Player(String textureFileName) {
@@ -56,9 +56,32 @@ public class Player {
     }
 
     private void updatePlayerPosition() {
+        // Get the mouse position
         float mouseX = Gdx.input.getX();
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Convert the Y-coordinate
-        playerSprite.setPosition(mouseX - playerSprite.getWidth() / 2, mouseY - playerSprite.getHeight() / 2);
+
+        // Calculate the new position of the player sprite based on the mouse position
+        // Ensuring the sprite's center is aligned with the mouse cursor
+        float newX = mouseX - (playerSprite.getWidth() / 2);
+        float newY = mouseY - (playerSprite.getHeight() / 2);
+
+        // Constrain the newX position within the screen bounds
+        // DO NOT CHANGE ANY OF THE VALUES HERE OR THE CONTROLS WILL BE MESSED UP
+        if (newX < -500) {
+            newX = -500; // Left edge
+        } else if (newX > 650) {
+            newX = 650; // Right edge
+        }
+
+        // Constrain the newY position within the screen bounds
+        if (newY < -180) {
+            newY = -180; // Bottom edge
+        } else if (newY > 490) {
+            newY = 490; // Top edge
+        }
+
+        // Set the new position of the player sprite
+        playerSprite.setPosition(newX, newY);
     }
 
     private void shootProjectile() {

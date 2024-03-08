@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+
 public class Level implements Screen {
     private final aquamarine game;
     private SpriteBatch batch;
@@ -17,15 +19,60 @@ public class Level implements Screen {
     private Music levelbgm;
     private Parallax ParallaxBG;
     private Player player;
+    private ArrayList<EnemyMermaid> enemies;
     private Texture blackTexture;
     private float alpha = 1f;
+    private float spawnTimer;
+    private float spawnInterval = 3f;
     public Level(aquamarine game) {
         this.game = game;
         // Load the sprite
         batch = new SpriteBatch();
         // Initialize the player
         player = new Player("submarine.png");
+        // Initialize enemies
+        enemies = new ArrayList<EnemyMermaid>();
+        spawnTimer = 0;
     }
+
+    public void updateSpawn(float deltaTime) {
+        // Update spawn timer
+        spawnTimer += deltaTime;
+
+        // Check if it's time to spawn a new enemy
+        if (spawnTimer >= spawnInterval) {
+            spawnEnemy();
+            spawnTimer = 0; // Reset the spawn timer
+        }
+
+        // Update all enemies
+        for (EnemyMermaid enemy : enemies) {
+            enemy.update(deltaTime);
+        }
+    }
+
+    private void spawnEnemy() {
+        // Spawn enemy at desired position
+        EnemyMermaid newEnemy = new EnemyMermaid("mermaid.png");
+        // Use the height of the first frame of the animation for initial positioning
+        float enemyHeight = newEnemy.mermaidAnimation.getKeyFrames()[0].getRegionHeight();
+        // Calculate a random y position within the screen height bounds
+        float randomY = (float) Math.random() * (Gdx.graphics.getHeight() - (enemyHeight * 2));
+
+        // Set the enemy's initial position to spawn on the right edge of the screen at a random y-coordinate
+        newEnemy.position.set(Gdx.graphics.getWidth(), randomY);
+
+        // Add the new enemy to your collection of enemies
+        enemies.add(newEnemy);
+    }
+
+    public void draw(SpriteBatch batch) {
+        // Draw all enemies
+        for (EnemyMermaid enemy : enemies) {
+            enemy.draw(batch);
+        }
+    }
+
     @Override
     public void show() {
         /*---------------
@@ -65,11 +112,13 @@ public class Level implements Screen {
         bgbatch.begin();
         ParallaxBG.render(bgbatch);
         bgbatch.end();
-        // Draw the sprite
+        // Draw the sprites
         batch.begin();
         player.draw(batch);
+        draw(batch);
         batch.end();
         player.update(delta);
+        updateSpawn(delta);
         // Fade-in effect
         float fadeSpeed = 1f;
         alpha -= fadeSpeed * delta;
