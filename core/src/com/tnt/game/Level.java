@@ -3,7 +3,9 @@ package com.tnt.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -11,10 +13,12 @@ public class Level implements Screen {
     private final aquamarine game;
     private SpriteBatch batch;
     private SpriteBatch bgbatch;
+    private SpriteBatch fadebatch;
     private Music levelbgm;
     private Parallax ParallaxBG;
     private Player player;
-
+    private Texture blackTexture;
+    private float alpha = 1f;
     public Level(aquamarine game) {
         this.game = game;
         // Load the sprite
@@ -44,11 +48,19 @@ public class Level implements Screen {
         ParallaxBG.addLayer(new Texture("far.png"), 30f); // Farthest layer
         ParallaxBG.addLayer(new Texture("sand.png"), 60f); // Middle layer
         ParallaxBG.addLayer(new Texture("foreground-merged.png"), 90f);   // Closest layer
+
+        fadebatch = new SpriteBatch();
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888); // 1x1 pixel, you can scale it later
+        pixmap.setColor(Color.BLACK);
+        pixmap.fill();
+        blackTexture = new Texture(pixmap);
+        pixmap.dispose();
     }
     @Override
     public void render(float delta) {
         // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        // Render parallax background
         ParallaxBG.update(delta);
         bgbatch.begin();
         ParallaxBG.render(bgbatch);
@@ -58,6 +70,18 @@ public class Level implements Screen {
         player.draw(batch);
         batch.end();
         player.update(delta);
+        // Fade-in effect
+        float fadeSpeed = 1f;
+        alpha -= fadeSpeed * delta;
+        alpha = Math.max(alpha, 0); // Ensure alpha doesn't go below 0
+        // Enable blending and draw the black texture with the current alpha
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        fadebatch.begin();
+        fadebatch.setColor(1, 1, 1, alpha); // Set the batch color to include the alpha for transparency
+        fadebatch.draw(blackTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Draw full screen
+        fadebatch.setColor(Color.WHITE); // Reset batch color to avoid affecting other textures
+        fadebatch.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     @Override
@@ -80,5 +104,6 @@ public class Level implements Screen {
     public void dispose() {
         if (batch != null) batch.dispose();
         if (player != null) player.dispose();
+        if (fadebatch != null) fadebatch.dispose();
     }
 }

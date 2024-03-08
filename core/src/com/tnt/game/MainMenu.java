@@ -3,17 +3,21 @@ package com.tnt.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 
 public class MainMenu implements Screen {
     private final aquamarine game;
@@ -75,12 +79,55 @@ public class MainMenu implements Screen {
                 startButton.addAction(Actions.sequence(
                     Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
                     Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
-                    Actions.run(new Runnable() {      // Change screen
-                        @Override
-                        public void run() {
-                            game.setScreen(new Level(game));
-                        }
-                    })
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Create a full-screen black image actor to cover the screen
+                                final Image blackOverlay = new Image(skin.newDrawable("white", Color.BLACK));
+                                blackOverlay.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                                blackOverlay.getColor().a = 0f; // Start fully transparent
+                                // Add the overlay to the stage
+                                stage.addActor(blackOverlay);
+                                final float fadeDuration = 1f; // Duration for the fade effect
+                                float initialVolume = mainmenuBGM.getVolume(); // Assuming 'backgroundMusic' is your music instance
+
+                                // Schedule a task to decrease the volume over time
+                                Timer.schedule(new Timer.Task() {
+                                    float elapsedTime = 0f;
+
+                                    @Override
+                                    public void run() {
+                                        elapsedTime += Gdx.graphics.getDeltaTime(); // Increment elapsed time
+                                        float alpha = elapsedTime / fadeDuration; // Calculate the fade-out progress
+                                        // Calculate the new volume
+                                        float newVolume = Math.max(initialVolume * (1 - alpha), 0);
+
+                                        // Set the volume to the new value or 0 if the new value is negative
+                                        mainmenuBGM.setVolume(newVolume);
+
+                                        if (alpha >= 1 || newVolume <= 0) {
+                                            this.cancel(); // Cancel the timer task when the fade-out is complete or volume reaches 0
+                                            mainmenuBGM.stop();
+                                        }
+                                    }
+                                }, 0, 1/60f, (int) (fadeDuration * 60)); // Schedule the task to run every frame (1/60 second)
+
+                                // Use a FadeIn action for the blackOverlay
+                                AlphaAction fadeOutAction = Actions.fadeIn(fadeDuration);
+                                blackOverlay.addAction(fadeOutAction);
+
+                                // Fade the overlay to full opacity
+                                blackOverlay.addAction(Actions.sequence(
+                                        Actions.fadeIn(0.75f),
+                                        Actions.run(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                game.setScreen(new Level(game)); // Change to the level screen after the fade is complete
+                                            }
+                                        })
+                                ));
+                            }
+                        })
                 ));
             }
         });
