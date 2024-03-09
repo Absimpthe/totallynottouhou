@@ -164,17 +164,6 @@ public class MainMenu implements Screen {
         instructionsDialog.setSize(Math.max(instructionsDialog.getWidth(), 700), Math.max(instructionsDialog.getHeight(), 200)); // Ensure the dialog is not smaller than desired
         instructionsDialog.setPosition(Gdx.graphics.getWidth() / 2 - instructionsDialog.getWidth() / 2, Gdx.graphics.getHeight() / 2 - instructionsDialog.getHeight() / 2); // Center the dialog on screen
 
-
-        // // Step 2: Initialize and configure the Dialog
-        // instructionsDialog = new Dialog("How To Play", skin);
-        // Label instructionsLabel = new Label("Your game instructions go here.\n yfgedsahxsefdsughwaea\ndhuwebafnsdxwfed", skin);
-        // instructionsLabel.setWrap(true); // Enable word-wrap
-        // instructionsLabel.setAlignment(Align.center); // Align text to center
-        // instructionsDialog.getContentTable().add(instructionsLabel).width(680).pad(10).center();
-        // instructionsDialog.pack(); // Automatically size the dialog based on its contents
-        // instructionsDialog.setSize(Math.max(instructionsDialog.getWidth(), 700), Math.max(instructionsDialog.getHeight(), 200)); // Ensure the dialog is not smaller than desired
-        // instructionsDialog.setPosition(Gdx.graphics.getWidth() / 2 - instructionsDialog.getWidth() / 2, Gdx.graphics.getHeight() / 2 - instructionsDialog.getHeight() / 2); // Center the dialog on screen
-
         // Add the 'OK' button at the bottom right of the dialog
         TextButton okButton = new TextButton("OK", skin);
         instructionsDialog.getButtonTable().add(okButton).size(120, 85).bottom().right().padBottom(5).padRight(10);; // Adjust the size as needed
