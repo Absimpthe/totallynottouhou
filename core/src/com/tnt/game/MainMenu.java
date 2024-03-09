@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -33,6 +34,7 @@ public class MainMenu implements Screen {
     // Toggle flags for music and sound effects
     public static boolean isMusicOn = true;
     public static boolean isSoundOn = true;
+    Dialog instructionsDialog;
 
     public MainMenu(aquamarine game) {
         this.game = game;
@@ -134,27 +136,73 @@ public class MainMenu implements Screen {
         stage.addActor(startButton); // Add the button to the stage
 
         /*---------------
-        create "Instruction" button
+        create "How To Play" button
         --------------- */
         TextButton instructionButton = new TextButton("How To Play", skin);
         instructionButton.setSize(350, 100); // Set the size of the button
         // Set the position below the Start button with some margin
         instructionButton.setPosition(Gdx.graphics.getWidth() / 2 - instructionButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 70);
         instructionButton.setScale(1);  // Set the initial scale to 1 (100%)
+
+        // Step 2: Initialize and configure the Dialog
+        instructionsDialog = new Dialog("", skin); // Removed title here
+
+        // Configure title label
+        Label titleLabel = new Label("How To Play", skin, "subtitle"); // Assuming "title" is your style name
+        titleLabel.setAlignment(Align.center); // Align title text to center
+        // Add title label to the title table of the dialog
+        instructionsDialog.getTitleTable().clearChildren(); // Clear any existing content first
+        instructionsDialog.getTitleTable().add(titleLabel).padTop(60).expandX().fillX(); // Adjust padTop as needed for position
+
+        // Configure content label
+        Label instructionsLabel = new Label("Your game instructions go here.\n yfgedsahxsefdsughwaea\ndhuwebafnsdxwfed", skin);
+        instructionsLabel.setWrap(true); // Enable word-wrap
+        instructionsLabel.setAlignment(Align.center); // Align text to center
+        instructionsDialog.getContentTable().add(instructionsLabel).width(680).padTop(70).center();
+
+        instructionsDialog.pack(); // Automatically size the dialog based on its contents
+        instructionsDialog.setSize(Math.max(instructionsDialog.getWidth(), 700), Math.max(instructionsDialog.getHeight(), 200)); // Ensure the dialog is not smaller than desired
+        instructionsDialog.setPosition(Gdx.graphics.getWidth() / 2 - instructionsDialog.getWidth() / 2, Gdx.graphics.getHeight() / 2 - instructionsDialog.getHeight() / 2); // Center the dialog on screen
+
+
+        // // Step 2: Initialize and configure the Dialog
+        // instructionsDialog = new Dialog("How To Play", skin);
+        // Label instructionsLabel = new Label("Your game instructions go here.\n yfgedsahxsefdsughwaea\ndhuwebafnsdxwfed", skin);
+        // instructionsLabel.setWrap(true); // Enable word-wrap
+        // instructionsLabel.setAlignment(Align.center); // Align text to center
+        // instructionsDialog.getContentTable().add(instructionsLabel).width(680).pad(10).center();
+        // instructionsDialog.pack(); // Automatically size the dialog based on its contents
+        // instructionsDialog.setSize(Math.max(instructionsDialog.getWidth(), 700), Math.max(instructionsDialog.getHeight(), 200)); // Ensure the dialog is not smaller than desired
+        // instructionsDialog.setPosition(Gdx.graphics.getWidth() / 2 - instructionsDialog.getWidth() / 2, Gdx.graphics.getHeight() / 2 - instructionsDialog.getHeight() / 2); // Center the dialog on screen
+
+        // Add the 'OK' button at the bottom right of the dialog
+        TextButton okButton = new TextButton("OK", skin);
+        instructionsDialog.getButtonTable().add(okButton).size(120, 85).bottom().right().padBottom(5).padRight(10);; // Adjust the size as needed
+        okButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                instructionsDialog.hide();
+            }
+        });
+
+        // Set the button listener for the dialog
+        instructionsDialog.getButtonTable().getCells().first().getActor().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                instructionsDialog.hide();
+            }
+        });
+
         instructionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Sequence of actions: press down, release, then change screen
                 instructionButton.addAction(Actions.sequence(
                     Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
-                    Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
-                    Actions.run(new Runnable() {      // Change screen
-                        @Override
-                        public void run() {
-                            // game.setScreen(new Level(game));
-                        }
-                    })
-                ));
+                    Actions.scaleTo(1f, 1f, 0.1f)    // Simulate release
+                    )
+                );
+                instructionsDialog.show(stage);
             }
         });
         stage.addActor(instructionButton);
