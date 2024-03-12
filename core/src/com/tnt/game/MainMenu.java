@@ -69,7 +69,7 @@ public class MainMenu implements Screen {
         /*---------------
         create "Start" button
         --------------- */
-        TextButton startButton = new TextButton("Start", skin);
+        TextButton startButton = new TextButton("Start", skin,"toggle");
         startButton.setSize(350, 100); // Set the size of the button
         startButton.setPosition(Gdx.graphics.getWidth() / 2 - startButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 40); // Center the button
         startButton.setScale(1);  // Set the initial scale to 1 (100%)

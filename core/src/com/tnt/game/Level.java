@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,9 @@ public class Level implements Screen {
     private float alpha = 1f;
     private float spawnTimer;
     private float spawnInterval = 3f;
+    private GameStatus gameStatus;
+    private Stage stage;
+
     public Level(aquamarine game) {
         this.game = game;
         // Load the sprite
@@ -33,6 +38,13 @@ public class Level implements Screen {
         // Initialize enemies
         enemies = new ArrayList<EnemyMermaid>();
         spawnTimer = 0;
+
+        // Initialize stage and skin
+        this.stage = new Stage();
+        Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
+        // Initialize GameStatus
+        this.gameStatus = new GameStatus(game, skin);
+        gameStatus.addToStage(stage); // Add the health bar to the stage
     }
 
     public void updateSpawn(float deltaTime) {
@@ -131,6 +143,11 @@ public class Level implements Screen {
         fadebatch.setColor(Color.WHITE); // Reset batch color to avoid affecting other textures
         fadebatch.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        // Update and draw the health bar
+        gameStatus.update(delta);
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override
@@ -154,5 +171,6 @@ public class Level implements Screen {
         if (batch != null) batch.dispose();
         if (player != null) player.dispose();
         if (fadebatch != null) fadebatch.dispose();
+        if (stage != null) stage.dispose();
     }
 }
