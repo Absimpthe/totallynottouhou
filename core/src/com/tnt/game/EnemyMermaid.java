@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class EnemyMermaid {
     public Animation<TextureRegion> mermaidAnimation; // Animation instead of Sprite
@@ -53,9 +54,17 @@ public class EnemyMermaid {
             shootTimer = 0;
         }
 
-        // Update projectiles
-        for (BubbleProjectile projectile : projectiles) {
+        Iterator<BubbleProjectile> iterator = projectiles.iterator();
+        while (iterator.hasNext()) {
+            BubbleProjectile projectile = iterator.next();
+            // First, update the projectile's state for this frame
             projectile.updateProjectile(deltaTime);
+
+            // Then, check if the projectile has moved off-screen after the update
+            if (isProjectileOffScreen(projectile)) {
+                iterator.remove(); // Remove the projectile from the ArrayList
+                projectile.dispose(); // Dispose of the projectile's resources
+            }
         }
 
         // Check for collisions and other logic...
@@ -63,13 +72,13 @@ public class EnemyMermaid {
 
     private void shoot() {
         TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
-        Vector2 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f),
-                position.y + (currentFrame.getRegionHeight() * 0.5f));
-        Vector2 projectileVelocity = new Vector2(-400f, 0);
+        Vector2 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 1000f,
+                position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
+        Vector2 projectileVelocity = new Vector2(-100f, 0);
         BubbleProjectile newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture);
         projectiles.add(newProjectile);
         if (MainMenu.isSFXEnabled()) {
-            shootingSound.play(0.1f);
+            shootingSound.play(3f);
         }
     }
 
@@ -82,13 +91,14 @@ public class EnemyMermaid {
         // Calculate scaled width and height
         float scaledWidth = currentFrame.getRegionWidth() * scaleFactor;
         float scaledHeight = currentFrame.getRegionHeight() * scaleFactor;
-
         batch.draw(currentFrame, position.x, position.y, scaledWidth, scaledHeight);
-
         // Draw projectiles
-        for (BubbleProjectile projectile : projectiles) {
-            projectile.draw(batch);
-        }
+        for (BubbleProjectile projectile : projectiles) projectile.draw(batch);
+    }
+
+    // DO NOT CHANGE THIS X VALUE OR THE BUBBLES WILL BE DISPOSED PREMATURELY
+    private boolean isProjectileOffScreen(BubbleProjectile projectile) {
+        return projectile.getPosition().x < -1000;
     }
 
     public void takeDamage(float amount) {
@@ -96,5 +106,11 @@ public class EnemyMermaid {
         if (health <= 0) {
             // Handle enemy death
         }
+    }
+
+    public void dispose() {
+        mermaidSheet.dispose();
+        projectileTexture.dispose();
+        shootingSound.dispose();
     }
 }

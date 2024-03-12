@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Level implements Screen {
     private final aquamarine game;
@@ -57,9 +58,17 @@ public class Level implements Screen {
             spawnTimer = 0; // Reset the spawn timer
         }
 
-        // Update all enemies
-        for (EnemyMermaid enemy : enemies) {
+        Iterator<EnemyMermaid> iterator = enemies.iterator();
+        while (iterator.hasNext()) {
+            EnemyMermaid enemy = iterator.next();
+            // First, update the enemy's state for this frame
             enemy.update(deltaTime);
+
+            // Then, check if the enemy has moved off-screen after the update. DO NOT CHANGE THIS X VALUE
+            if (enemy.position.x < -1000) {
+                iterator.remove(); // Remove the enemy from the ArrayList
+                enemy.dispose(); // Dispose of the enemy's resources
+            }
         }
     }
 

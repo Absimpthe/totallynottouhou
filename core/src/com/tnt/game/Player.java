@@ -46,7 +46,7 @@ public class Player {
             // Check if the projectile has gone off-screen
             if (isProjectileOffScreen(projectile)) {
                 projectiles.removeIndex(i); // Remove the projectile from the array
-                projectile.dispose(); // Optionally dispose of the projectile's resources
+                projectile.dispose(); // Dispose of the projectile's resources
             }
         }
     }

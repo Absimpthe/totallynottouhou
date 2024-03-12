@@ -15,7 +15,7 @@ public class BubbleProjectile {
         this.velocity = velocity;
         this.sprite = new Sprite(texture); // Create a sprite from the texture
         this.sprite.setPosition(position.x, position.y); // Set the sprite's position
-        this.sprite.setScale(0.1f); // Scale the sprite
+        this.sprite.setScale(0.02f); // Scale the sprite
 
         // Initialize the bounds rectangle for collision detection, adjusted for the sprite's scale
         this.bounds = new Circle(sprite.getX() + sprite.getWidth() / 2 * sprite.getScaleX(),
