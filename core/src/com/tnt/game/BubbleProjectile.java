@@ -11,7 +11,15 @@ public class BubbleProjectile {
     private Sprite sprite; // Sprite for the projectile
     private Circle bounds; // Used for collision detection
 
+    private float amplitude; // Amplitude of the sine wave
+    private float frequency; // Frequency of the sine wave
+    private float baseX; // Base horizontal position
+
     public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture) {
+        this.amplitude = 1f;
+        this.frequency = 0.02f;
+        this.baseX = position.x; // Store the initial horizontal position
+
         this.velocity = velocity;
         this.sprite = new Sprite(texture); // Create a sprite from the texture
         this.sprite.setPosition(position.x, position.y); // Set the sprite's position
@@ -23,8 +31,15 @@ public class BubbleProjectile {
                 sprite.getWidth() / 2 * sprite.getScaleX());
     }
     public void updateProjectile(float deltaTime) {
-        // Adjust the sprite's position based on the velocity and the time passed since the last frame
-        sprite.setPosition(sprite.getX() + velocity.x * deltaTime, sprite.getY() + velocity.y * deltaTime);
+        // Move horizontally based on velocity
+        baseX += velocity.x * deltaTime;
+
+        // Calculate new vertical position using sine wave
+        float newY = sprite.getY() + amplitude * (float)Math.sin(frequency * baseX);
+
+        // Set the new position
+        sprite.setPosition(baseX, newY);
+
         // Update the bounds position as well to match the new position
         bounds.setPosition(sprite.getX(), sprite.getY());
     }

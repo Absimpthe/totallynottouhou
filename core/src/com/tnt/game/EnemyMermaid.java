@@ -72,7 +72,7 @@ public class EnemyMermaid {
 
     private void shoot() {
         TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
-        Vector2 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 1000f,
+        Vector2 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
                 position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
         Vector2 projectileVelocity = new Vector2(-100f, 0);
         BubbleProjectile newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture);
