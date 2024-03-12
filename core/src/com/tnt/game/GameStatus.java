@@ -19,8 +19,9 @@ public class GameStatus {
 
         // Create a new ProgressBar with the style, min value, max value, and step size
         healthBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
-        // healthBar.setSize(10, 10);
-        healthBar.setPosition(100,100); 
+        healthBar.setValue(100); 
+        healthBar.setSize(500, 50); // Example size
+        healthBar.setPosition(10,640); 
     }
 
     public void update(float delta) {
