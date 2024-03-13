@@ -2,13 +2,17 @@ package com.tnt.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Player {
+    private ShapeRenderer shapeRenderer; // ShapeRenderer is used for debugging. DO NOT DELETE YET
     private Sprite playerSprite;
     private Texture playerTexture;
     private Array<PlayerProjectile> projectiles;
@@ -16,6 +20,9 @@ public class Player {
     private float shootTimer;
     private float shootInterval = 0.5f; // Time in seconds between shots
     private Sound shootingSound;
+    private Rectangle playerbounds;
+    private float currentHp;
+    private float maxHp;
 
     public Player(String textureFileName) {
         this.playerTexture = new Texture(Gdx.files.internal(textureFileName));
@@ -27,6 +34,13 @@ public class Player {
         this.shootTimer = 0;
         this.projectileTexture = new Texture(Gdx.files.internal("playerprojectile.png"));
         this.shootingSound = Gdx.audio.newSound(Gdx.files.internal("shootingsound.wav"));
+        this.playerbounds = new Rectangle(playerSprite.getX(), playerSprite.getY(),
+                playerSprite.getWidth() * playerSprite.getScaleX(),
+                playerSprite.getHeight() * playerSprite.getScaleY());
+        this.maxHp = 300f;
+        this.currentHp = maxHp;
+        // Shape renderer used for debugging
+        this.shapeRenderer = new ShapeRenderer();
     }
 
     public void update(float deltaTime) {
@@ -53,6 +67,23 @@ public class Player {
     private boolean isProjectileOffScreen(PlayerProjectile projectile) {
         // Assuming the projectile moves to the right, check if its position exceeds screen width
         return projectile.getPosition().x > Gdx.graphics.getWidth();
+    }
+
+    public boolean checkCollision(Rectangle otherBounds) {
+        return playerbounds.overlaps(otherBounds); // Check if this projectile's bounds overlap with another object's bounds
+    }
+
+    public void takeDamage(float damage) {
+        currentHp -= damage; // Decrease HP by damage taken
+        if (currentHp <= 0) {
+            currentHp = 0; // Ensure HP doesn't go below 0
+            onPlayerDeath();
+        }
+    }
+
+    private void onPlayerDeath() {
+        // Implement what happens when the player dies (e.g., trigger game over, respawn, etc.)
+        // This could involve setting a game state, displaying a message, playing a sound, etc.
     }
 
     private void updatePlayerPosition() {
@@ -82,6 +113,16 @@ public class Player {
 
         // Set the new position of the player sprite
         playerSprite.setPosition(newX, newY);
+        // Update player's hitbox. DO NOT CHANGE THESE VALUES OR THE HITBOX WILL BE IN THE WRONG POSITION
+        playerbounds.setPosition(playerSprite.getX() + 504f, playerSprite.getY() + 185f);
+    }
+
+    // Method to highlight the position of the hitbox. Used only for debugging, DO NOT DELETE YET
+    public void drawHitbox() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(playerbounds.x, playerbounds.y, playerbounds.width, playerbounds.height);
+        shapeRenderer.end();
     }
 
     private void shootProjectile() {

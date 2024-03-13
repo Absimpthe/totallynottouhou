@@ -26,7 +26,7 @@ public class Level implements Screen {
     private Texture blackTexture;
     private float alpha = 1f;
     private float spawnTimer;
-    private float spawnInterval = 3f;
+    private float spawnInterval = 5f;
     private GameStatus gameStatus;
     private Stage stage;
 
@@ -47,6 +47,24 @@ public class Level implements Screen {
         this.gameStatus = new GameStatus(game, skin);
         gameStatus.addToStage(stage); // Add the health bar to the stage
     }
+
+    private void checkCollisions() {
+        // Iterate over each enemy
+        for (EnemyMermaid enemy : enemies) {
+            // Now iterate over each projectile managed by the current enemy
+            Iterator<BubbleProjectile> iterator = enemy.getProjectiles().iterator();
+            while (iterator.hasNext()) {
+                BubbleProjectile projectile = iterator.next();
+                if (player.checkCollision(projectile.getBounds())) {
+                    // Handle collision (e.g., reduce player health, destroy projectile, etc.)
+                    player.takeDamage(100f);
+                    projectile.dispose(); // Dispose of the projectile resources
+                    iterator.remove(); // Remove the projectile from the enemy's list using the iterator
+                }
+            }
+        }
+    }
+
 
     public void updateSpawn(float deltaTime) {
         // Update spawn timer
@@ -70,6 +88,7 @@ public class Level implements Screen {
                 enemy.dispose(); // Dispose of the enemy's resources
             }
         }
+        checkCollisions();
     }
 
     private void spawnEnemy() {
@@ -117,6 +136,7 @@ public class Level implements Screen {
         ParallaxBG.addLayer(new Texture("sand.png"), 60f); // Middle layer
         ParallaxBG.addLayer(new Texture("foreground-merged.png"), 90f);   // Closest layer
 
+        // Initialize pixmap for fade-in effect
         fadebatch = new SpriteBatch();
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888); // 1x1 pixel, you can scale it later
         pixmap.setColor(Color.BLACK);
@@ -157,6 +177,16 @@ public class Level implements Screen {
         gameStatus.update(delta);
         stage.act(delta);
         stage.draw();
+        // Used to draw hitboxes for debugging. Comment out if not needed, DO NOT DELETE
+        player.drawHitbox();
+        for (EnemyMermaid enemy : enemies) {
+            // Now iterate over each projectile managed by the current enemy
+            Iterator<BubbleProjectile> iterator = enemy.getProjectiles().iterator();
+            while (iterator.hasNext()) {
+                BubbleProjectile projectile = iterator.next();
+                projectile.drawHitbox();
+            }
+        }
     }
 
     @Override

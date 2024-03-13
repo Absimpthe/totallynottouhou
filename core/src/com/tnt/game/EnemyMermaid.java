@@ -21,7 +21,7 @@ public class EnemyMermaid {
     Vector2 velocity;
     float health;
     float shootTimer;
-    float shootInterval = 1.0f; // Seconds between shots
+    float shootInterval = 2.0f; // Seconds between shots
     ArrayList<BubbleProjectile> projectiles;
 
     public EnemyMermaid (String textureFileName) {
@@ -34,12 +34,11 @@ public class EnemyMermaid {
 
         this.mermaidAnimation = new Animation<>(0.1f, mermaidFrames);
         this.stateTime = 0f;
-
+        this.projectiles = new ArrayList<>();
         this.position = new Vector2(Gdx.graphics.getWidth() - frameSize, Gdx.graphics.getHeight() / 2f - frameSize / 2f);
         this.velocity = new Vector2(-1, 0);
         this.health = 100;
         this.projectileTexture = new Texture(Gdx.files.internal("bubble.png"));
-        this.projectiles = new ArrayList<>();
         this.shootingSound = Gdx.audio.newSound(Gdx.files.internal("bubbleshootsound.wav"));
         this.shootTimer = 0;
     }
@@ -99,6 +98,10 @@ public class EnemyMermaid {
     // DO NOT CHANGE THIS X VALUE OR THE BUBBLES WILL BE DISPOSED PREMATURELY
     private boolean isProjectileOffScreen(BubbleProjectile projectile) {
         return projectile.getPosition().x < -1000;
+    }
+
+    public ArrayList<BubbleProjectile> getProjectiles() {
+        return projectiles;
     }
 
     public void takeDamage(float amount) {
