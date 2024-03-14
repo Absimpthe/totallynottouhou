@@ -27,8 +27,9 @@ public class Level implements Screen {
     private float alpha = 1f;
     private float spawnTimer;
     private float spawnInterval = 5f;
-    private GameStatus gameStatus;
+    private HealthStatus healthStatus;
     private Stage stage;
+    private GameStatus gameStatus;
 
     public Level(aquamarine game) {
         this.game = game;
@@ -43,9 +44,13 @@ public class Level implements Screen {
         // Initialize stage and skin
         this.stage = new Stage();
         Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
-        // Initialize GameStatus
+
+        // Initialize HealthStatus
+        this.healthStatus = new HealthStatus(game, skin);
+        healthStatus.addToStage(stage); // Add the health bar to the stage
+
         this.gameStatus = new GameStatus(game, skin);
-        gameStatus.addToStage(stage); // Add the health bar to the stage
+        gameStatus.addToStage(stage); // Add the setting button to the stage
     }
 
     private void checkCollisions() {
@@ -64,7 +69,6 @@ public class Level implements Screen {
             }
         }
     }
-
 
     public void updateSpawn(float deltaTime) {
         // Update spawn timer
@@ -174,7 +178,7 @@ public class Level implements Screen {
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
         // Update and draw the health bar
-        gameStatus.update(delta);
+        healthStatus.update(delta);
         stage.act(delta);
         stage.draw();
         // Used to draw hitboxes for debugging. Comment out if not needed, DO NOT DELETE
