@@ -166,7 +166,7 @@ public class MainMenu implements Screen {
 
         // Add the 'OK' button at the bottom right of the dialog
         TextButton okButton = new TextButton("OK", skin);
-        instructionsDialog.getButtonTable().add(okButton).size(120, 85).bottom().right().padBottom(5).padRight(10);; // Adjust the size as needed
+        instructionsDialog.getButtonTable().add(okButton).size(120, 85).bottom().right().padBottom(5).padRight(10); // Adjust the size as needed
         okButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

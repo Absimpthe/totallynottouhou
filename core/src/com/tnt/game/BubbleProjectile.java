@@ -10,11 +10,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class BubbleProjectile {
     private ShapeRenderer shapeRenderer;
-    private Vector2 velocity; // Speed and direction of the projectile's movement
+    private final Vector2 velocity; // Speed and direction of the projectile's movement
     private Sprite sprite; // Sprite for the projectile
     private Rectangle bounds; // Used for collision detection
-    private float amplitude; // Amplitude of the sine wave
-    private float frequency; // Frequency of the sine wave
+    private final float amplitude; // Amplitude of the sine wave
+    private final float frequency; // Frequency of the sine wave
     private float baseX; // Base horizontal position
 
     public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture) {

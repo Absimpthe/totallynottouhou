@@ -36,7 +36,7 @@ public class Level implements Screen {
         // Load the sprite
         batch = new SpriteBatch();
         // Initialize the player
-        player = new Player("submarine.png");
+        player = new Player("submarine.png", game);
         // Initialize enemies
         enemies = new ArrayList<EnemyMermaid>();
         spawnTimer = 0;
