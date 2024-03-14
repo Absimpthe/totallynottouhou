@@ -1,30 +1,40 @@
 package com.tnt.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Player {
-    private ShapeRenderer shapeRenderer; // ShapeRenderer is used for debugging. DO NOT DELETE YET
-    private Sprite playerSprite;
-    private Texture playerTexture;
+    private final ShapeRenderer shapeRenderer; // ShapeRenderer is used for debugging. DO NOT DELETE YET
+    private final Sprite playerSprite;
+    private final Texture playerTexture;
     private Array<PlayerProjectile> projectiles;
     private Texture projectileTexture;
     private float shootTimer;
-    private float shootInterval = 0.5f; // Time in seconds between shots
-    private Sound shootingSound;
-    private Rectangle playerbounds;
+    private final float shootInterval = 0.5f; // Time in seconds between shots
+    private final Sound shootingSound;
+    private final Rectangle playerbounds;
     private float currentHp;
-    private float maxHp;
+    private final float maxHp;
+    private Animation<TextureRegion> explosionAnimation;
+    private boolean isExploding;
+    private float explosionTimer;
+    private static final float EXPLOSION_FRAME_DURATION = 0.1f; // Adjust the frame duration as needed
+    private boolean isVisible;
+    private final Music explosionSound; // SFX initialized as music to ensure it only plays once (sounds can overlap, music cannot)
 
     public Player(String textureFileName) {
+        this.isVisible = true;
         this.playerTexture = new Texture(Gdx.files.internal(textureFileName));
         this.playerSprite = new Sprite(playerTexture);
         this.playerSprite.setScale(0.1f);
@@ -39,6 +49,8 @@ public class Player {
                 playerSprite.getHeight() * playerSprite.getScaleY());
         this.maxHp = 300f;
         this.currentHp = maxHp;
+        this.explosionSound = Gdx.audio.newMusic(Gdx.files.internal("explosionSound.wav"));
+
         // Shape renderer used for debugging
         this.shapeRenderer = new ShapeRenderer();
     }
@@ -63,6 +75,14 @@ public class Player {
                 projectile.dispose(); // Dispose of the projectile's resources
             }
         }
+        if (isExploding) {
+            isVisible = false; // Make the player sprite disappear. Better than disposing of it entirely in case the player restarts the level
+            explosionTimer += deltaTime;
+            if (explosionAnimation.isAnimationFinished(explosionTimer)) {
+                isExploding = false;
+                // Trigger game over or respawn logic here
+            }
+        }
     }
     private boolean isProjectileOffScreen(PlayerProjectile projectile) {
         // Assuming the projectile moves to the right, check if its position exceeds screen width
@@ -77,13 +97,30 @@ public class Player {
         currentHp -= damage; // Decrease HP by damage taken
         if (currentHp <= 0) {
             currentHp = 0; // Ensure HP doesn't go below 0
+            if (MainMenu.isSFXEnabled()) {
+                explosionSound.play();
+            }
             onPlayerDeath();
         }
     }
 
     private void onPlayerDeath() {
-        // Implement what happens when the player dies (e.g., trigger game over, respawn, etc.)
-        // This could involve setting a game state, displaying a message, playing a sound, etc.
+        isExploding = true;
+        Texture explosionSheet = new Texture(Gdx.files.internal("deathexplosion.png"));
+// Assuming the sprite sheet is a grid of frames with equal size
+        int frameCols = 6; // Number of columns in the sprite sheet
+        int frameRows = 5; // Number of rows in the sprite sheet
+        TextureRegion[][] tmp = TextureRegion.split(explosionSheet,
+                explosionSheet.getWidth() / frameCols,
+                explosionSheet.getHeight() / frameRows);
+        TextureRegion[] explosionFrames = new TextureRegion[frameCols * frameRows];
+        int index = 0;
+        for (int i = 0; i < frameRows; i++) {
+            for (int j = 0; j < frameCols; j++) {
+                explosionFrames[index++] = tmp[i][j];
+            }
+        }
+        explosionAnimation = new Animation<TextureRegion>(EXPLOSION_FRAME_DURATION, explosionFrames);
     }
 
     private void updatePlayerPosition() {
@@ -137,9 +174,15 @@ public class Player {
         }
     }
     public void draw(SpriteBatch batch) {
-        playerSprite.draw(batch);
-        for (PlayerProjectile projectile : projectiles) {
-            projectile.draw(batch);
+        if (isVisible) {
+            playerSprite.draw(batch);
+            for (PlayerProjectile projectile : projectiles) {
+                projectile.draw(batch);
+            }
+        }
+        if (isExploding) {
+            batch.draw(explosionAnimation.getKeyFrame(explosionTimer),
+                    playerSprite.getX() + 380f, playerSprite.getY() + 25f);
         }
     }
 
@@ -147,5 +190,6 @@ public class Player {
         playerTexture.dispose();
         projectileTexture.dispose();
         shootingSound.dispose();
+        explosionSound.dispose();
     }
 }
