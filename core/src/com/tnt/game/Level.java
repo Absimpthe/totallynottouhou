@@ -43,6 +43,7 @@ public class Level implements Screen {
 
         // Initialize stage and skin
         this.stage = new Stage();
+        Gdx.input.setInputProcessor(stage); // Set input processorr
         Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
 
         // Initialize HealthStatus
@@ -130,6 +131,7 @@ public class Level implements Screen {
         } else {
             levelbgm.pause(); // Pause background music
         }
+        gameStatus.setLevelBGM(levelbgm);
 
         /*---------------
         Initialize parallax background

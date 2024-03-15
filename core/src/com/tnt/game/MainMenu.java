@@ -79,8 +79,6 @@ public class MainMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // Sequence of actions: press down, release, then change screen
                 startButton.addAction(Actions.sequence(
-                    Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
-                    Actions.scaleTo(1f, 1f, 0.1f),    // Simulate release
                         Actions.run(new Runnable() {
                             @Override
                             public void run() {
@@ -185,12 +183,6 @@ public class MainMenu implements Screen {
         instructionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Sequence of actions: press down, release, then change screen
-                instructionButton.addAction(Actions.sequence(
-                    Actions.scaleTo(0.9f, 0.9f, 0.1f), // Simulate press down
-                    Actions.scaleTo(1f, 1f, 0.1f)    // Simulate release
-                    )
-                );
                 instructionsDialog.show(stage);
             }
         });
