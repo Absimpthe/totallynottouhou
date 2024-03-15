@@ -2,10 +2,13 @@ package com.tnt.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -14,33 +17,39 @@ import java.util.Iterator;
 public class EnemyMermaid {
     public Animation<TextureRegion> mermaidAnimation; // Animation instead of Sprite
     private float stateTime; // Track elapsed time for the animation
-    private Texture mermaidSheet; // The sprite sheet texture
-    private Texture projectileTexture;
+    private final Texture mermaidSheet; // The sprite sheet texture
+    private final Texture projectileTexture;
     public Sound shootingSound;
     Vector2 position;
     Vector2 velocity;
     float health;
+    public boolean isAlive = true;
     float shootTimer;
     float shootInterval = 2.0f; // Seconds between shots
     ArrayList<BubbleProjectile> projectiles;
+    private final Rectangle bounds;
+    private final ShapeRenderer shapeRenderer;
 
     public EnemyMermaid (String textureFileName) {
         this.mermaidSheet = new Texture(Gdx.files.internal(textureFileName));
 
-        // Assume each frame is square and the sheet is a single row
-        int frameSize = mermaidSheet.getHeight(); // Assuming each frame is as tall as the sheet
-        TextureRegion[][] temp = TextureRegion.split(mermaidSheet, frameSize, frameSize);
+        int frameWidth = (mermaidSheet.getWidth() / 6);
+        int frameHeight = mermaidSheet.getHeight();
+        TextureRegion[][] temp = TextureRegion.split(mermaidSheet, frameWidth, frameHeight);
         TextureRegion[] mermaidFrames = temp[0]; // Assuming all frames are in the first row
 
         this.mermaidAnimation = new Animation<>(0.1f, mermaidFrames);
         this.stateTime = 0f;
         this.projectiles = new ArrayList<>();
-        this.position = new Vector2(Gdx.graphics.getWidth() - frameSize, Gdx.graphics.getHeight() / 2f - frameSize / 2f);
+        this.position = new Vector2(Gdx.graphics.getWidth() - frameWidth, Gdx.graphics.getHeight() / 2f - frameHeight / 2f);
         this.velocity = new Vector2(-1, 0);
         this.health = 100;
         this.projectileTexture = new Texture(Gdx.files.internal("bubble.png"));
         this.shootingSound = Gdx.audio.newSound(Gdx.files.internal("bubbleshootsound.wav"));
         this.shootTimer = 0;
+        this.bounds = new Rectangle(position.x, position.y, frameWidth + 7, frameHeight + 42);
+
+        this.shapeRenderer = new ShapeRenderer();
     }
 
     public void update(float deltaTime) {
@@ -65,8 +74,21 @@ public class EnemyMermaid {
                 projectile.dispose(); // Dispose of the projectile's resources
             }
         }
-
+        // Update the bounds to match the new position
+        bounds.setPosition(position.x + 37, position.y + 4);
         // Check for collisions and other logic...
+    }
+
+    public boolean checkCollision(Rectangle otherBounds) {
+        return bounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
+    }
+
+    // Method to highlight the position of the hitbox. Used only for debugging, DO NOT DELETE YET
+    public void drawHitbox() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+        shapeRenderer.end();
     }
 
     private void shoot() {
@@ -107,7 +129,8 @@ public class EnemyMermaid {
     public void takeDamage(float amount) {
         health -= amount;
         if (health <= 0) {
-            // Handle enemy death
+            health = 0; // Prevent health from going below 0
+            isAlive = false;
         }
     }
 

@@ -93,13 +93,17 @@ public class Player {
             }
         }
     }
+
+    public Array<PlayerProjectile> getProjectiles() {
+        return projectiles;
+    }
     private boolean isProjectileOffScreen(PlayerProjectile projectile) {
         // Assuming the projectile moves to the right, check if its position exceeds screen width
         return projectile.getPosition().x > Gdx.graphics.getWidth();
     }
 
     public boolean checkCollision(Rectangle otherBounds) {
-        return playerbounds.overlaps(otherBounds); // Check if this projectile's bounds overlap with another object's bounds
+        return playerbounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
     }
 
     public void takeDamage(float damage) {
