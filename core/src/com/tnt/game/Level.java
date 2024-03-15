@@ -191,6 +191,17 @@ public class Level implements Screen {
                 projectile.drawHitbox();
             }
         }
+        if (player.playerIsDead) {
+            if (MainMenu.isMusicOn) {
+                levelbgm.stop();
+            }
+            if (MainMenu.isSFXEnabled()) {
+                player.shootingSound.stop();
+                for (EnemyMermaid enemy : enemies) {
+                    enemy.shootingSound.stop();
+                }
+            }
+        }
     }
 
     @Override

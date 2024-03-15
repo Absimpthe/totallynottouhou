@@ -24,7 +24,7 @@ public class Player {
     private final Texture projectileTexture;
     private float shootTimer;
     private final float shootInterval = 0.5f; // Time in seconds between shots
-    private final Sound shootingSound;
+    public final Sound shootingSound;
     private final Rectangle playerbounds;
     private float currentHp;
     private final float maxHp;
@@ -38,6 +38,7 @@ public class Player {
     private SpriteBatch batch;
     private Texture blackTexture;
     private boolean isFading;
+    public boolean playerIsDead = false;
 
     public Player(String textureFileName, aquamarine game) {
         this.game = game;
@@ -113,6 +114,7 @@ public class Player {
     }
 
     public void onPlayerDeath() {
+        playerIsDead = true;
         isExploding = true;
         Texture explosionSheet = new Texture(Gdx.files.internal("deathexplosion.png"));
 // Assuming the sprite sheet is a grid of frames with equal size
@@ -206,7 +208,7 @@ public class Player {
     }
 
     public void fadeOut(float delta) {
-        fadeAlpha += delta * 0.5f; 
+        fadeAlpha += delta * 0.5f;
         if (fadeAlpha > 1) {
             fadeAlpha = 1;
             game.setScreen(new GameOver(game)); // Switch to GameOver screen

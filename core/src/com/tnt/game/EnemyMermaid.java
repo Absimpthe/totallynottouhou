@@ -16,7 +16,7 @@ public class EnemyMermaid {
     private float stateTime; // Track elapsed time for the animation
     private Texture mermaidSheet; // The sprite sheet texture
     private Texture projectileTexture;
-    private Sound shootingSound;
+    public Sound shootingSound;
     Vector2 position;
     Vector2 velocity;
     float health;
