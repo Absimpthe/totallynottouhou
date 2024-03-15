@@ -36,7 +36,7 @@ public class Level implements Screen {
         // Load the sprite
         batch = new SpriteBatch();
         // Initialize the player
-        player = new Player("submarine.png");
+        player = new Player("submarine.png", game);
         // Initialize enemies
         enemies = new ArrayList<EnemyMermaid>();
         spawnTimer = 0;
@@ -62,11 +62,34 @@ public class Level implements Screen {
             while (iterator.hasNext()) {
                 BubbleProjectile projectile = iterator.next();
                 if (player.checkCollision(projectile.getBounds())) {
-                    // Handle collision (e.g., reduce player health, destroy projectile, etc.)
+                    // Handle collision
                     player.takeDamage(100f);
                     projectile.dispose(); // Dispose of the projectile resources
                     iterator.remove(); // Remove the projectile from the enemy's list using the iterator
                 }
+            }
+        }
+        // Iterate over each player projectile
+        Iterator<PlayerProjectile> playerProjectileIterator = player.getProjectiles().iterator();
+        while (playerProjectileIterator.hasNext()) {
+            PlayerProjectile playerProjectile = playerProjectileIterator.next();
+            // Now iterate over each enemy to check collision with the current projectile
+            for (EnemyMermaid enemy : enemies) {
+                if (enemy.checkCollision(playerProjectile.getBounds())) {
+                    enemy.takeDamage(50f);
+                    playerProjectile.dispose(); // Dispose of the player projectile resources
+                    playerProjectileIterator.remove(); // Remove the projectile from the player's list
+                }
+            }
+        }
+    }
+
+    private void removeDeadEnemies() {
+        Iterator<EnemyMermaid> iterator = enemies.iterator();
+        while (iterator.hasNext()) {
+            EnemyMermaid enemy = iterator.next();
+            if (!enemy.isAlive) { // Check if the enemy is not alive
+                iterator.remove(); // Remove the enemy from the list
             }
         }
     }
@@ -94,6 +117,7 @@ public class Level implements Screen {
             }
         }
         checkCollisions();
+        removeDeadEnemies();
     }
 
     private void spawnEnemy() {
@@ -186,11 +210,23 @@ public class Level implements Screen {
         // Used to draw hitboxes for debugging. Comment out if not needed, DO NOT DELETE
         player.drawHitbox();
         for (EnemyMermaid enemy : enemies) {
+            enemy.drawHitbox();
             // Now iterate over each projectile managed by the current enemy
             Iterator<BubbleProjectile> iterator = enemy.getProjectiles().iterator();
             while (iterator.hasNext()) {
                 BubbleProjectile projectile = iterator.next();
                 projectile.drawHitbox();
+            }
+        }
+        if (player.playerIsDead) {
+            if (MainMenu.isMusicOn) {
+                levelbgm.stop();
+            }
+            if (MainMenu.isSFXEnabled()) {
+                player.shootingSound.stop();
+                for (EnemyMermaid enemy : enemies) {
+                    enemy.shootingSound.stop();
+                }
             }
         }
     }

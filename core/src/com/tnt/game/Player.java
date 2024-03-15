@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,14 +16,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Player {
+    private final aquamarine game;
     private final ShapeRenderer shapeRenderer; // ShapeRenderer is used for debugging. DO NOT DELETE YET
     private final Sprite playerSprite;
     private final Texture playerTexture;
     private Array<PlayerProjectile> projectiles;
-    private Texture projectileTexture;
+    private final Texture projectileTexture;
     private float shootTimer;
     private final float shootInterval = 0.5f; // Time in seconds between shots
-    private final Sound shootingSound;
+    public final Sound shootingSound;
     private final Rectangle playerbounds;
     private float currentHp;
     private final float maxHp;
@@ -32,8 +34,14 @@ public class Player {
     private static final float EXPLOSION_FRAME_DURATION = 0.1f; // Adjust the frame duration as needed
     private boolean isVisible;
     private final Music explosionSound; // SFX initialized as music to ensure it only plays once (sounds can overlap, music cannot)
+    private float fadeAlpha = 0;
+    private SpriteBatch batch;
+    private Texture blackTexture;
+    private boolean isFading;
+    public boolean playerIsDead = false;
 
-    public Player(String textureFileName) {
+    public Player(String textureFileName, aquamarine game) {
+        this.game = game;
         this.isVisible = true;
         this.playerTexture = new Texture(Gdx.files.internal(textureFileName));
         this.playerSprite = new Sprite(playerTexture);
@@ -80,9 +88,14 @@ public class Player {
             explosionTimer += deltaTime;
             if (explosionAnimation.isAnimationFinished(explosionTimer)) {
                 isExploding = false;
+                fadeOut(deltaTime);
                 // Trigger game over or respawn logic here
             }
         }
+    }
+
+    public Array<PlayerProjectile> getProjectiles() {
+        return projectiles;
     }
     private boolean isProjectileOffScreen(PlayerProjectile projectile) {
         // Assuming the projectile moves to the right, check if its position exceeds screen width
@@ -90,7 +103,7 @@ public class Player {
     }
 
     public boolean checkCollision(Rectangle otherBounds) {
-        return playerbounds.overlaps(otherBounds); // Check if this projectile's bounds overlap with another object's bounds
+        return playerbounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
     }
 
     public void takeDamage(float damage) {
@@ -104,7 +117,8 @@ public class Player {
         }
     }
 
-    private void onPlayerDeath() {
+    public void onPlayerDeath() {
+        playerIsDead = true;
         isExploding = true;
         Texture explosionSheet = new Texture(Gdx.files.internal("deathexplosion.png"));
 // Assuming the sprite sheet is a grid of frames with equal size
@@ -121,6 +135,14 @@ public class Player {
             }
         }
         explosionAnimation = new Animation<TextureRegion>(EXPLOSION_FRAME_DURATION, explosionFrames);
+        // Start the fade-to-black effect
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.BLACK);
+        pixmap.fill();
+        blackTexture = new Texture(pixmap); // Create a texture from pixmap
+        pixmap.dispose(); // Pixmap is no longer needed once the texture is created
+        batch = new SpriteBatch();
+        isFading = true;
     }
 
     private void updatePlayerPosition() {
@@ -184,6 +206,23 @@ public class Player {
             batch.draw(explosionAnimation.getKeyFrame(explosionTimer),
                     playerSprite.getX() + 380f, playerSprite.getY() + 25f);
         }
+        if (isFading) {
+            fadeOut(Gdx.graphics.getDeltaTime());
+        }
+    }
+
+    public void fadeOut(float delta) {
+        fadeAlpha += delta * 0.5f;
+        if (fadeAlpha > 1) {
+            fadeAlpha = 1;
+            game.setScreen(new GameOver(game)); // Switch to GameOver screen
+        }
+        batch.begin();
+        Color oldColor = batch.getColor();
+        batch.setColor(new Color(0, 0, 0, fadeAlpha));
+        batch.draw(blackTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.setColor(oldColor);
+        batch.end();
     }
 
     public void dispose() {
@@ -191,5 +230,7 @@ public class Player {
         projectileTexture.dispose();
         shootingSound.dispose();
         explosionSound.dispose();
+        if (batch != null) batch.dispose();
+        if (blackTexture != null) blackTexture.dispose();
     }
 }
