@@ -20,8 +20,8 @@ public class HealthStatus {
         // Create a new ProgressBar with the style, min value, max value, and step size
         healthBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
         healthBar.setValue(100); 
-        healthBar.setSize(500, 50); // Example size
-        healthBar.setPosition(10,640); 
+        healthBar.setSize(500, 0); // Example size
+        healthBar.setPosition(10,670); 
     }
 
     public void update(float delta) {

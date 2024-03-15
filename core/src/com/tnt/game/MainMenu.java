@@ -32,7 +32,6 @@ public class MainMenu implements Screen {
     SpriteBatch batch;
 
     // Toggle flags for music and sound effects
-    public static boolean isMusicOn = true;
     public static boolean isSoundOn = true;
     Dialog instructionsDialog;
 
@@ -199,38 +198,38 @@ public class MainMenu implements Screen {
         /*---------------
         Create and position music button
         --------------- */
-        TextButton musicButton = new TextButton(isMusicOn ? "Music: On" : "Music: Off", skin);
-        musicButton.setSize(350, 100);
-        musicButton.setPosition(Gdx.graphics.getWidth() / 2 - musicButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 180);
+        isSoundOn = true;
+        TextButton soundButton = new TextButton(isSoundOn ? "Sound: On" : "Sound: Off", skin);
+        soundButton.setSize(350, 100);
+        soundButton.setPosition(Gdx.graphics.getWidth() / 2 - soundButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 180);
         // musicButton.setScale(0.2f, 0.2f); 
-        musicButton.addListener(new ClickListener() {
+        soundButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                isMusicOn = !isMusicOn; // Toggle music state
-                musicButton.setText(isMusicOn ? "Music: On" : "Music: Off");
-                if (isMusicOn) {
+                isSoundOn = !isSoundOn; // Toggle music state
+                soundButton.setText(isSoundOn ? "Sound: On" : "Sound: Off");
+                if (isSoundOn) {
                     mainmenuBGM.play(); // Resume music
                 } else {
                     mainmenuBGM.pause(); // Pause music
                 }
             }
         });
-        stage.addActor(musicButton);
+        stage.addActor(soundButton);
         
         /*---------------
         Create and position sound effect buttons
         --------------- */
-        TextButton soundButton = new TextButton(isSoundOn ? "Sound: On" : "Sound: Off", skin);
-        soundButton.setSize(350,100);
-        soundButton.setPosition(Gdx.graphics.getWidth() / 2 - soundButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 290);
-        soundButton.addListener(new ClickListener() {
+        TextButton quitButton = new TextButton("Quit", skin);
+        quitButton.setSize(350,100);
+        quitButton.setPosition(Gdx.graphics.getWidth() / 2 - quitButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 290);
+        quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                isSoundOn = !isSoundOn; // Toggle sound state
-                soundButton.setText(isSoundOn ? "Sound: On" : "Sound: Off");
+                Gdx.app.exit();
             }
         });
-        stage.addActor(soundButton);
+        stage.addActor(quitButton);
     }
 
     public static boolean isSFXEnabled() {

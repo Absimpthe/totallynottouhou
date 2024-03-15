@@ -44,13 +44,86 @@ public class GameStatus {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Dialog optionsDialog = new Dialog("", skin);
-                optionsDialog.pack(); // Size the dialog based on its contents
-                optionsDialog.setSize(1000, 1000);
                 optionsDialog.text("Choose an option");
 
+
+                // -------------------------------
+                // Add the "Resume" button 
+                // -------------------------------
+                TextButton resumeButton = new TextButton("Resume", skin);
+                optionsDialog.getButtonTable().add(resumeButton).size(370, 95).pad(10).padTop(0).padBottom(20).row(); // Adjust the size as needed
+                resumeButton.setPosition(200, 200);
+                resumeButton.addListener(new ClickListener() {
+            });
+
+                // -------------------------------
+                // Add the "Start Over" button 
+                // -------------------------------
+                TextButton startOverButton = new TextButton("Start Over", skin);
+                optionsDialog.getButtonTable().add(startOverButton).size(370, 95).pad(10).padTop(10).padBottom(20).row(); // Adjust the size as needed
+                startOverButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        // Sequence of actions: press down, release, then change screen
+                        startOverButton.addAction(Actions.sequence(
+                                Actions.run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Create a full-screen black image actor to cover the screen
+                                        final Image blackOverlay = new Image(skin.newDrawable("white", Color.BLACK));
+                                        blackOverlay.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                                        blackOverlay.getColor().a = 0f; // Start fully transparent
+                                        // Add the overlay to the stage
+                                        stage.addActor(blackOverlay);
+                                        final float fadeDuration = 1f; // Duration for the fade effect
+                                        float initialVolume = levelbgm.getVolume(); // Assuming 'backgroundMusic' is your music instance
+        
+                                        // Schedule a task to decrease the volume over time
+                                        Timer.schedule(new Timer.Task() {
+                                            float elapsedTime = 0f;
+        
+                                            @Override
+                                            public void run() {
+                                                elapsedTime += Gdx.graphics.getDeltaTime(); // Increment elapsed time
+                                                float alpha = elapsedTime / fadeDuration; // Calculate the fade-out progress
+                                                // Calculate the new volume
+                                                float newVolume = Math.max(initialVolume * (1 - alpha), 0);
+        
+                                                // Set the volume to the new value or 0 if the new value is negative
+                                                levelbgm.setVolume(newVolume);
+        
+                                                if (alpha >= 1 || newVolume <= 0) {
+                                                    this.cancel(); // Cancel the timer task when the fade-out is complete or volume reaches 0
+                                                    levelbgm.stop();
+                                                }
+                                            }
+                                        }, 0, 1/60f, (int) (fadeDuration * 60)); // Schedule the task to run every frame (1/60 second)
+        
+                                        // Use a FadeIn action for the blackOverlay
+                                        AlphaAction fadeOutAction = Actions.fadeIn(fadeDuration);
+                                        blackOverlay.addAction(fadeOutAction);
+        
+                                        // Fade the overlay to full opacity
+                                        blackOverlay.addAction(Actions.sequence(
+                                                Actions.fadeIn(0.75f),
+                                                Actions.run(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        game.setScreen(new Level(game)); // Change to the level screen after the fade is complete
+                                                    }
+                                                })
+                                        ));
+                                    }
+                                })
+                        ));
+                    }
+                });
+
+                                // -------------------------------
                 // Add the "Back to Menu" button 
+                // -------------------------------
                 TextButton backToMenuButton = new TextButton("Back to Menu", skin);
-                optionsDialog.getButtonTable().add(backToMenuButton).size(350, 95).padBottom(-80).padRight(10);; // Adjust the size as needed
+                optionsDialog.getButtonTable().add(backToMenuButton).size(370, 95).pad(10).padTop(10).padBottom(20).row(); // Adjust the size as needed
                 backToMenuButton.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -108,74 +181,6 @@ public class GameStatus {
                         ));
                     }
                 });
-
-                // Add the "Resume" button 
-                TextButton resumeButton = new TextButton("Resume", skin);
-                optionsDialog.getButtonTable().add(resumeButton).size(350, 95).padBottom(80).padRight(10);; // Adjust the size as needed
-                resumeButton.addListener(new ClickListener() {
-                    
-            });
-
-                // Add the "Start Over" button 
-                TextButton startOverButton = new TextButton("Start Over", skin);
-                optionsDialog.getButtonTable().add(startOverButton).size(350, 95).padBottom(80).padRight(10);; // Adjust the size as needed
-                startOverButton.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        // Sequence of actions: press down, release, then change screen
-                        backToMenuButton.addAction(Actions.sequence(
-                                Actions.run(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // Create a full-screen black image actor to cover the screen
-                                        final Image blackOverlay = new Image(skin.newDrawable("white", Color.BLACK));
-                                        blackOverlay.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                                        blackOverlay.getColor().a = 0f; // Start fully transparent
-                                        // Add the overlay to the stage
-                                        stage.addActor(blackOverlay);
-                                        final float fadeDuration = 1f; // Duration for the fade effect
-                                        float initialVolume = levelbgm.getVolume(); // Assuming 'backgroundMusic' is your music instance
-        
-                                        // Schedule a task to decrease the volume over time
-                                        Timer.schedule(new Timer.Task() {
-                                            float elapsedTime = 0f;
-        
-                                            @Override
-                                            public void run() {
-                                                elapsedTime += Gdx.graphics.getDeltaTime(); // Increment elapsed time
-                                                float alpha = elapsedTime / fadeDuration; // Calculate the fade-out progress
-                                                // Calculate the new volume
-                                                float newVolume = Math.max(initialVolume * (1 - alpha), 0);
-        
-                                                // Set the volume to the new value or 0 if the new value is negative
-                                                levelbgm.setVolume(newVolume);
-        
-                                                if (alpha >= 1 || newVolume <= 0) {
-                                                    this.cancel(); // Cancel the timer task when the fade-out is complete or volume reaches 0
-                                                    levelbgm.stop();
-                                                }
-                                            }
-                                        }, 0, 1/60f, (int) (fadeDuration * 60)); // Schedule the task to run every frame (1/60 second)
-        
-                                        // Use a FadeIn action for the blackOverlay
-                                        AlphaAction fadeOutAction = Actions.fadeIn(fadeDuration);
-                                        blackOverlay.addAction(fadeOutAction);
-        
-                                        // Fade the overlay to full opacity
-                                        blackOverlay.addAction(Actions.sequence(
-                                                Actions.fadeIn(0.75f),
-                                                Actions.run(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        game.setScreen(new Level(game)); // Change to the level screen after the fade is complete
-                                                    }
-                                                })
-                                        ));
-                                    }
-                                })
-                        ));
-                    }
-                });
         
                 optionsDialog.pack();
                 
@@ -186,7 +191,14 @@ public class GameStatus {
                         optionsDialog.hide();
                     }
                 });
-                optionsDialog.show(stage);
+                optionsDialog.show(stage).pad(0);;
+                optionsDialog.pack(); // Size the dialog based on its contents
+                // Center the dialog
+                float posX = (Gdx.graphics.getWidth() - optionsDialog.getWidth()) / 2;
+                float posY = (Gdx.graphics.getHeight() - optionsDialog.getHeight()) / 2;
+                optionsDialog.setPosition(posX, posY - 50);
+                // optionsDialog.setPosition(posX , posY );
+                optionsDialog.setSize(420, 500);
             }
         });        
     }
