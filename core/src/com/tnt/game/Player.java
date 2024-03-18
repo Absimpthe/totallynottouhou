@@ -29,7 +29,7 @@ public class Player {
     private float currentHp;
     private final float maxHp;
     private Animation<TextureRegion> explosionAnimation;
-    private boolean isExploding;
+    public boolean isExploding;
     private float explosionTimer;
     private static final float EXPLOSION_FRAME_DURATION = 0.1f; // Adjust the frame duration as needed
     private boolean isVisible;

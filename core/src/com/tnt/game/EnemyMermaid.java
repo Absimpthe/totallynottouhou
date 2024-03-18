@@ -1,6 +1,7 @@
 package com.tnt.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,8 +30,14 @@ public class EnemyMermaid {
     ArrayList<BubbleProjectile> projectiles;
     private final Rectangle bounds;
     private final ShapeRenderer shapeRenderer;
+    private Animation<TextureRegion> bloodAnimation;
+    private boolean isDying = false;
+    private float explosionTimer;
+    private boolean isVisible;
+    private final Music explosionSound;
 
     public EnemyMermaid (String textureFileName) {
+        this.isVisible = true;
         this.mermaidSheet = new Texture(Gdx.files.internal(textureFileName));
 
         int frameWidth = (mermaidSheet.getWidth() / 6);
@@ -48,6 +55,7 @@ public class EnemyMermaid {
         this.shootingSound = Gdx.audio.newSound(Gdx.files.internal("bubbleshootsound.wav"));
         this.shootTimer = 0;
         this.bounds = new Rectangle(position.x, position.y, frameWidth + 7, frameHeight + 42);
+        this.explosionSound = Gdx.audio.newMusic(Gdx.files.internal("splat.mp3"));
 
         this.shapeRenderer = new ShapeRenderer();
     }
@@ -57,10 +65,10 @@ public class EnemyMermaid {
         position.add(velocity);
 
         shootTimer += deltaTime;
-        if (shootTimer >= shootInterval) {
-            shoot();
-            shootTimer = 0;
-        }
+//        if (shootTimer >= shootInterval) {
+//            shoot();
+//            shootTimer = 0;
+//        }
 
         Iterator<BubbleProjectile> iterator = projectiles.iterator();
         while (iterator.hasNext()) {
@@ -76,7 +84,13 @@ public class EnemyMermaid {
         }
         // Update the bounds to match the new position
         bounds.setPosition(position.x + 37, position.y + 4);
-        // Check for collisions and other logic...
+        if (isDying) {
+            explosionTimer += deltaTime;
+            if (bloodAnimation.isAnimationFinished(explosionTimer)) {
+                isDying = false;
+            }
+            isVisible = false; // Make the sprite disappear
+        }
     }
 
     public boolean checkCollision(Rectangle otherBounds) {
@@ -112,9 +126,16 @@ public class EnemyMermaid {
         // Calculate scaled width and height
         float scaledWidth = currentFrame.getRegionWidth() * scaleFactor;
         float scaledHeight = currentFrame.getRegionHeight() * scaleFactor;
-        batch.draw(currentFrame, position.x, position.y, scaledWidth, scaledHeight);
-        // Draw projectiles
-        for (BubbleProjectile projectile : projectiles) projectile.draw(batch);
+
+        if (isVisible) {
+            batch.draw(currentFrame, position.x, position.y, scaledWidth, scaledHeight);
+            // Draw projectiles
+            for (BubbleProjectile projectile : projectiles) projectile.draw(batch);
+        }
+        if (isDying) {
+            System.out.println("blood anim");
+            batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x, position.y, scaledWidth, scaledHeight);
+        }
     }
 
     // DO NOT CHANGE THIS X VALUE OR THE BUBBLES WILL BE DISPOSED PREMATURELY
@@ -131,6 +152,28 @@ public class EnemyMermaid {
         if (health <= 0) {
             health = 0; // Prevent health from going below 0
             isAlive = false;
+            isDying = true;
+            onMermaidDeath();
+        }
+    }
+
+    public void onMermaidDeath() {
+        Texture bloodSheet = new Texture(Gdx.files.internal("bloodSheet.png"));
+        int frameCols = 6; // Number of columns in the sprite sheet
+        int frameRows = 3; // Number of rows in the sprite sheet
+        TextureRegion[][] tmp = TextureRegion.split(bloodSheet,
+                bloodSheet.getWidth() / frameCols,
+                bloodSheet.getHeight() / frameRows);
+        TextureRegion[] bloodFrames = new TextureRegion[frameCols * frameRows];
+        int index = 0;
+        for (int i = 0; i < frameRows; i++) {
+            for (int j = 0; j < frameCols; j++) {
+                bloodFrames[index++] = tmp[i][j];
+            }
+        }
+        bloodAnimation = new Animation<TextureRegion>(0.1f, bloodFrames);
+        if (MainMenu.isSFXEnabled()) {
+            explosionSound.play();
         }
     }
 
@@ -138,5 +181,6 @@ public class EnemyMermaid {
         mermaidSheet.dispose();
         projectileTexture.dispose();
         shootingSound.dispose();
+        explosionSound.dispose();
     }
 }
