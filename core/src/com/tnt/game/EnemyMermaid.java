@@ -136,7 +136,6 @@ public class EnemyMermaid {
             for (BubbleProjectile projectile : projectiles) projectile.draw(batch);
         }
         if (isDying) {
-            System.out.println("blood anim");
             batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x - 160f, position.y - 220f, w, h);
         }
     }
