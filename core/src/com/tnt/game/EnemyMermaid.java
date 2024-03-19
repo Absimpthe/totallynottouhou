@@ -65,10 +65,10 @@ public class EnemyMermaid {
         position.add(velocity);
 
         shootTimer += deltaTime;
-//        if (shootTimer >= shootInterval) {
-//            shoot();
-//            shootTimer = 0;
-//        }
+        if (shootTimer >= shootInterval) {
+            shoot();
+            shootTimer = 0;
+        }
 
         Iterator<BubbleProjectile> iterator = projectiles.iterator();
         while (iterator.hasNext()) {
@@ -127,6 +127,9 @@ public class EnemyMermaid {
         float scaledWidth = currentFrame.getRegionWidth() * scaleFactor;
         float scaledHeight = currentFrame.getRegionHeight() * scaleFactor;
 
+        float w = 5.0f * scaledWidth;
+        float h = 5.0f * scaledHeight;
+
         if (isVisible) {
             batch.draw(currentFrame, position.x, position.y, scaledWidth, scaledHeight);
             // Draw projectiles
@@ -134,7 +137,7 @@ public class EnemyMermaid {
         }
         if (isDying) {
             System.out.println("blood anim");
-            batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x, position.y, scaledWidth, scaledHeight);
+            batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x, position.y, w, h);
         }
     }
 
