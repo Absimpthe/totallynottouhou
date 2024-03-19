@@ -31,7 +31,7 @@ public class EnemyMermaid {
     private final Rectangle bounds;
     private final ShapeRenderer shapeRenderer;
     private Animation<TextureRegion> bloodAnimation;
-    private boolean isDying = false;
+    public boolean isDying = false;
     private float explosionTimer;
     private boolean isVisible;
     private final Music explosionSound;
