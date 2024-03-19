@@ -47,9 +47,9 @@ public class Level implements Screen {
         Gdx.input.setInputProcessor(stage); // Set input processorr
         Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
 
-        // // Initialize HealthStatus
-        // this.healthStatus = new HealthStatus(game, skin);
-        // healthStatus.addToStage(stage); // Add the health bar to the stage
+        // Initialize HealthStatus
+        this.healthStatus = new HealthStatus(game, skin);
+        healthStatus.addToStage(stage); // Add the health bar to the stage
 
         this.gameStatus = new GameStatus(game, skin);
         gameStatus.addToStage(stage); // Add the setting button to the stage
@@ -205,7 +205,7 @@ public class Level implements Screen {
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
         // Update and draw the health bar
-        // healthStatus.update(delta);
+        healthStatus.update(delta);
         stage.act(delta);
         stage.draw();
         // Used to draw hitboxes for debugging. Comment out if not needed, DO NOT DELETE
