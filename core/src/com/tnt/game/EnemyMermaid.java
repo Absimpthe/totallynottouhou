@@ -137,7 +137,7 @@ public class EnemyMermaid {
         }
         if (isDying) {
             System.out.println("blood anim");
-            batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x, position.y, w, h);
+            batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x - 160f, position.y - 220f, w, h);
         }
     }
 
