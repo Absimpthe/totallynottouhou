@@ -66,7 +66,7 @@ public class EnemyMermaid {
         position.add(velocity);
 
         shootTimer += deltaTime;
-        if (shootTimer >= shootInterval) {
+        if (shootTimer >= shootInterval && isAlive) {
             shoot();
             shootTimer = 0;
         }
@@ -138,11 +138,11 @@ public class EnemyMermaid {
         if (isVisible) {
             batch.draw(currentFrame, position.x, position.y, scaledWidth, scaledHeight);
             // Draw projectiles
-            for (BubbleProjectile projectile : projectiles) projectile.draw(batch);
         }
         if (isDying) {
             batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x - 160f, position.y - 220f, w, h);
         }
+        for (BubbleProjectile projectile : projectiles) projectile.draw(batch);
     }
 
     // DO NOT CHANGE THIS X VALUE OR THE BUBBLES WILL BE DISPOSED PREMATURELY
