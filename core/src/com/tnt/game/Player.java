@@ -151,34 +151,36 @@ public class Player {
     }
 
     private void updatePlayerPosition() {
-        // Get the mouse position
-        float mouseX = Gdx.input.getX();
-        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Convert the Y-coordinate
+        if (!playerIsDead) { // Prevent player from moving once dead
+            // Get the mouse position
+            float mouseX = Gdx.input.getX();
+            float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Convert the Y-coordinate
 
-        // Calculate the new position of the player sprite based on the mouse position
-        // Ensuring the sprite's center is aligned with the mouse cursor
-        float newX = mouseX - (playerSprite.getWidth() / 2);
-        float newY = mouseY - (playerSprite.getHeight() / 2);
+            // Calculate the new position of the player sprite based on the mouse position
+            // Ensuring the sprite's center is aligned with the mouse cursor
+            float newX = mouseX - (playerSprite.getWidth() / 2);
+            float newY = mouseY - (playerSprite.getHeight() / 2);
 
-        // Constrain the newX position within the screen bounds
-        // DO NOT CHANGE ANY OF THE VALUES HERE OR THE CONTROLS WILL BE MESSED UP
-        if (newX < -500) {
-            newX = -500; // Left edge
-        } else if (newX > 650) {
-            newX = 650; // Right edge
+            // Constrain the newX position within the screen bounds
+            // DO NOT CHANGE ANY OF THE VALUES HERE OR THE CONTROLS WILL BE MESSED UP
+            if (newX < -500) {
+                newX = -500; // Left edge
+            } else if (newX > 650) {
+                newX = 650; // Right edge
+            }
+
+            // Constrain the newY position within the screen bounds
+            if (newY < -180) {
+                newY = -180; // Bottom edge
+            } else if (newY > 490) {
+                newY = 490; // Top edge
+            }
+
+            // Set the new position of the player sprite
+            playerSprite.setPosition(newX, newY);
+            // Update player's hitbox. DO NOT CHANGE THESE VALUES OR THE HITBOX WILL BE IN THE WRONG POSITION
+            playerbounds.setPosition(playerSprite.getX() + 504f, playerSprite.getY() + 185f);
         }
-
-        // Constrain the newY position within the screen bounds
-        if (newY < -180) {
-            newY = -180; // Bottom edge
-        } else if (newY > 490) {
-            newY = 490; // Top edge
-        }
-
-        // Set the new position of the player sprite
-        playerSprite.setPosition(newX, newY);
-        // Update player's hitbox. DO NOT CHANGE THESE VALUES OR THE HITBOX WILL BE IN THE WRONG POSITION
-        playerbounds.setPosition(playerSprite.getX() + 504f, playerSprite.getY() + 185f);
     }
 
     // Method to highlight the position of the hitbox. Used only for debugging, DO NOT DELETE YET

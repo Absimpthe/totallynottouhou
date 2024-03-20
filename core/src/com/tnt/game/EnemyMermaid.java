@@ -19,7 +19,7 @@ public class EnemyMermaid {
     public Animation<TextureRegion> mermaidAnimation; // Animation instead of Sprite
     private float stateTime; // Track elapsed time for the animation
     private final Texture mermaidSheet; // The sprite sheet texture
-    private final Texture projectileTexture;
+    public final Texture projectileTexture;
     public Sound shootingSound;
     Vector2 position;
     Vector2 velocity;
@@ -36,10 +36,25 @@ public class EnemyMermaid {
     public boolean isVisible;
     public boolean hasHitbox = true;
     private final Music explosionSound;
+    private Color tint;
 
-    public EnemyMermaid (String textureFileName) {
+    public EnemyMermaid (String textureFileName, int enemyType) {
         this.isVisible = true;
         this.mermaidSheet = new Texture(Gdx.files.internal(textureFileName));
+
+        // Enemy color variants
+        switch (enemyType) {
+            case 1:
+                break;
+            case 2:
+                this.tint = new Color(0.5f, 0.7f, 1f, 1f);
+                break;
+            case 3:
+                this.tint = new Color(0.75f, 0.3f, 1f, 1f);
+                break;
+            default:
+                this.tint = Color.WHITE;
+        }
 
         int frameWidth = (mermaidSheet.getWidth() / 6);
         int frameHeight = mermaidSheet.getHeight();
@@ -136,8 +151,11 @@ public class EnemyMermaid {
         float h = 5.0f * scaledHeight;
 
         if (isVisible) {
+            // Set tint color before drawing
+            batch.setColor(tint != null ? tint : Color.WHITE);
             batch.draw(currentFrame, position.x, position.y, scaledWidth, scaledHeight);
-            // Draw projectiles
+            // Reset color to white after drawing
+            batch.setColor(Color.WHITE);
         }
         if (isDying) {
             batch.draw(bloodAnimation.getKeyFrame(explosionTimer), position.x - 160f, position.y - 220f, w, h);
