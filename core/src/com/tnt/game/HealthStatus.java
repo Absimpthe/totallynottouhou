@@ -7,29 +7,41 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class HealthStatus {
     private final aquamarine game;
-    private ProgressBar healthBar;
+    private Stage stage; // Assume there's a Stage available
+    private Texture heartTexture;
+    private Image[] heartImages;
+    private static final int LIVES = 3; // Number of lives
 
-    public HealthStatus(aquamarine game, Skin skin) {
+    public HealthStatus(aquamarine game, Stage stage) {
         this.game = game;
-        // Retrieve the ProgressBarStyle from the skin
-        ProgressBarStyle progressBarStyle = skin.get("health", ProgressBarStyle.class);
+        this.stage = stage;
+        heartTexture = new Texture(Gdx.files.internal("heart.png"));
+        heartImages = new Image[LIVES];
 
-        // Create a new ProgressBar with the style, min value, max value, and step size
-        healthBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
-        healthBar.setValue(100); 
-        healthBar.setSize(500, 0); // Example size
-        healthBar.setPosition(10,670); 
+        for (int i = 0; i < LIVES; i++) {
+            Drawable heartDrawable = new TextureRegionDrawable(new TextureRegion(heartTexture));
+            heartImages[i] = new Image(heartDrawable);
+            heartImages[i].setSize(50, 50); // Set the size
+            heartImages[i].setPosition(10 + i * 60, 660); // Set the position
+            stage.addActor(heartImages[i]); // Add to stage
+        }
     }
 
-    public void update(float delta) {
-        // Here you would update the health bar's value based on the game's status
-    }
-
-    public void addToStage(Stage stage) {
-        // Add health bar to the stage
-        stage.addActor(healthBar);
+    public void updateHearts(int currentLives) {
+    // Hide or remove hearts based on currentLives
+    for (int i = 0; i < heartImages.length; i++) {
+        if (i < currentLives) {
+            heartImages[i].setVisible(true);
+        } else {
+            heartImages[i].setVisible(false);
+        }
+        }
     }
 }

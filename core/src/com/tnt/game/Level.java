@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -31,6 +30,7 @@ public class Level implements Screen {
     private HealthStatus healthStatus;
     private Stage stage;
     private GameStatus gameStatus;
+    public float currentHp;
 
     public Level(aquamarine game) {
         this.game = game;
@@ -47,9 +47,8 @@ public class Level implements Screen {
         Gdx.input.setInputProcessor(stage); // Set input processorr
         Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
 
-        // Initialize HealthStatus
-        this.healthStatus = new HealthStatus(game, skin);
-        healthStatus.addToStage(stage); // Add the health bar to the stage
+        // Initialize HealthStatus (Heart Images)
+        this.healthStatus = new HealthStatus(game, stage);
 
         this.gameStatus = new GameStatus(game, skin);
         gameStatus.addToStage(stage); // Add the setting button to the stage
@@ -64,7 +63,8 @@ public class Level implements Screen {
                 BubbleProjectile projectile = iterator.next();
                 if (player.checkCollision(projectile.getBounds())) {
                     // Handle collision
-                    player.takeDamage(100f);
+                    currentHp = player.takeDamage(100f);
+                    notifyHealthChanged(currentHp);
                     projectile.dispose(); // Dispose of the projectile resources
                     iterator.remove(); // Remove the projectile from the enemy's list using the iterator
                 }
@@ -83,6 +83,18 @@ public class Level implements Screen {
                 }
             }
         }
+    }
+
+    public void notifyHealthChanged(float currentHp) {
+        // Convert health points to lives if necessary
+        int currentLives = calculateLivesFromHealth(currentHp);
+        healthStatus.updateHearts(currentLives);
+    }
+    
+    private int calculateLivesFromHealth(float currentHp) {
+        // Implement logic to convert health points to number of lives
+        // This is just a placeholder implementation
+        return (int)Math.ceil(currentHp / 100f);
     }
 
     private void removeDeadEnemies() {
@@ -205,8 +217,7 @@ public class Level implements Screen {
         fadebatch.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
-        // Update and draw the health bar
-        healthStatus.update(delta);
+
         stage.act(delta);
         stage.draw();
         // Used to draw hitboxes for debugging. Comment out if not needed, DO NOT DELETE

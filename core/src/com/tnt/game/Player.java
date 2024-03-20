@@ -38,6 +38,7 @@ public class Player {
     private SpriteBatch batch;
     private Texture blackTexture;
     private boolean isFading;
+    private Level level;
     public boolean playerIsDead = false;
 
     public Player(String textureFileName, aquamarine game) {
@@ -106,8 +107,9 @@ public class Player {
         return playerbounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
     }
 
-    public void takeDamage(float damage) {
+    public float takeDamage(float damage) {
         currentHp -= damage; // Decrease HP by damage taken
+        // level.notifyHealthChanged(currentHp);
         if (currentHp <= 0) {
             currentHp = 0; // Ensure HP doesn't go below 0
             if (MainMenu.isSFXEnabled()) {
@@ -115,6 +117,7 @@ public class Player {
             }
             onPlayerDeath();
         }
+        return currentHp;
     }
 
     public void onPlayerDeath() {
@@ -128,12 +131,14 @@ public class Player {
                 explosionSheet.getWidth() / frameCols,
                 explosionSheet.getHeight() / frameRows);
         TextureRegion[] explosionFrames = new TextureRegion[frameCols * frameRows];
+
         int index = 0;
         for (int i = 0; i < frameRows; i++) {
             for (int j = 0; j < frameCols; j++) {
                 explosionFrames[index++] = tmp[i][j];
             }
         }
+
         explosionAnimation = new Animation<TextureRegion>(EXPLOSION_FRAME_DURATION, explosionFrames);
         // Start the fade-to-black effect
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -195,6 +200,7 @@ public class Player {
             shootingSound.play(0.1f);
         }
     }
+
     public void draw(SpriteBatch batch) {
         if (isVisible) {
             playerSprite.draw(batch);
