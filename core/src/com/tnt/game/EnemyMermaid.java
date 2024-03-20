@@ -33,7 +33,8 @@ public class EnemyMermaid {
     private Animation<TextureRegion> bloodAnimation;
     public boolean isDying = false;
     private float explosionTimer;
-    private boolean isVisible;
+    public boolean isVisible;
+    public boolean hasHitbox = true;
     private final Music explosionSound;
 
     public EnemyMermaid (String textureFileName) {
@@ -94,7 +95,11 @@ public class EnemyMermaid {
     }
 
     public boolean checkCollision(Rectangle otherBounds) {
-        return bounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
+        if (hasHitbox) {
+            return bounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
+        } else {
+            return false;
+        }
     }
 
     // Method to highlight the position of the hitbox. Used only for debugging, DO NOT DELETE YET

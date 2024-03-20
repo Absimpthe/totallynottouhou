@@ -90,7 +90,8 @@ public class Level implements Screen {
         while (iterator.hasNext()) {
             EnemyMermaid enemy = iterator.next();
             if (!enemy.isAlive && !enemy.isDying) { // Check if the enemy is not alive
-                iterator.remove(); // Remove the enemy from the list
+                enemy.isVisible = false;
+                enemy.hasHitbox = false;
             }
         }
     }
