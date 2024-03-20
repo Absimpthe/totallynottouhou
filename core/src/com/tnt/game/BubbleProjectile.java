@@ -16,6 +16,7 @@ public class BubbleProjectile {
     private final float amplitude; // Amplitude of the sine wave
     private final float frequency; // Frequency of the sine wave
     private float baseX; // Base horizontal position
+    public boolean isVisible = true;
 
     public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture) {
         this.shapeRenderer = new ShapeRenderer();
@@ -58,7 +59,9 @@ public class BubbleProjectile {
     }
 
     public void draw(SpriteBatch batch) {
-        sprite.draw(batch); // Draw the sprite with its current scale
+        if (isVisible) {
+            sprite.draw(batch); // Draw the sprite with its current scale
+        }
     }
 
     public Rectangle getBounds() {
@@ -70,6 +73,5 @@ public class BubbleProjectile {
     }
 
     public void dispose() {
-
     }
 }

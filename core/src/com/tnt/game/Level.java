@@ -124,7 +124,7 @@ public class Level implements Screen {
 
     private void spawnEnemy() {
         // Spawn enemy at desired position
-        EnemyMermaid newEnemy = new EnemyMermaid("mermaid.png");
+        EnemyMermaid newEnemy = new EnemyMermaid("mermaid.png", 1);
         // Use the height of the first frame of the animation for initial positioning
         float enemyHeight = newEnemy.mermaidAnimation.getKeyFrames()[0].getRegionHeight();
         // Calculate a random y position within the screen height bounds
@@ -220,13 +220,18 @@ public class Level implements Screen {
                 projectile.drawHitbox();
             }
         }
-        if (player.playerIsDead) {
+        if (player.playerIsDead) { // Upon player death, stop all vfx and sfx
             if (MainMenu.isSFXEnabled()) {
                 levelbgm.stop();
                 player.shootingSound.stop();
                 for (EnemyMermaid enemy : enemies) {
                     enemy.shootingSound.stop();
                     enemy.isAlive = false;
+                    Iterator<BubbleProjectile> iterator = enemy.getProjectiles().iterator();
+                    while (iterator.hasNext()) {
+                        BubbleProjectile projectile = iterator.next();
+                        projectile.isVisible = false; // Set to invisible. Disposing directly will make it show up as a black box
+                    }
                 }
             }
         }
