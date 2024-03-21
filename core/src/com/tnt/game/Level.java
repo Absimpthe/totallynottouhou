@@ -1,5 +1,4 @@
 package com.tnt.game;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -14,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Level implements Screen {
+public class Level implements Screen{
     private final aquamarine game;
     private SpriteBatch batch;
     private SpriteBatch bgbatch;
@@ -31,6 +30,8 @@ public class Level implements Screen {
     private Stage stage;
     private GameStatus gameStatus;
     public float currentHp;
+    public GameScore gameScore;
+    public float currentScore;
 
     public Level(aquamarine game) {
         this.game = game;
@@ -52,6 +53,8 @@ public class Level implements Screen {
 
         this.gameStatus = new GameStatus(game, skin);
         gameStatus.addToStage(stage); // Add the setting button to the stage
+
+        this.gameScore = new GameScore(stage, skin);
     }
 
     private void checkCollisions() {
@@ -78,6 +81,7 @@ public class Level implements Screen {
             for (EnemyMermaid enemy : enemies) {
                 if (enemy.checkCollision(playerProjectile.getBounds())) {
                     enemy.takeDamage(50f);
+                    gameScore.addScore(500);
                     playerProjectile.dispose(); // Dispose of the player projectile resources
                     playerProjectileIterator.remove(); // Remove the projectile from the player's list
                 }

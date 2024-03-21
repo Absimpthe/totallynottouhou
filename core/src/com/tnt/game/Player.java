@@ -40,6 +40,7 @@ public class Player {
     private boolean isFading;
     private Level level;
     public boolean playerIsDead = false;
+    private GameScore gameScore;
 
     public Player(String textureFileName, aquamarine game) {
         this.game = game;
@@ -62,6 +63,7 @@ public class Player {
 
         // Shape renderer used for debugging
         this.shapeRenderer = new ShapeRenderer();
+        this.gameScore = gameScore;
     }
 
     public void update(float deltaTime) {
@@ -109,7 +111,6 @@ public class Player {
 
     public float takeDamage(float damage) {
         currentHp -= damage; // Decrease HP by damage taken
-        // level.notifyHealthChanged(currentHp);
         if (currentHp <= 0) {
             currentHp = 0; // Ensure HP doesn't go below 0
             if (MainMenu.isSFXEnabled()) {
@@ -223,7 +224,7 @@ public class Player {
         fadeAlpha += delta * 0.5f;
         if (fadeAlpha > 1) {
             fadeAlpha = 1;
-            game.setScreen(new GameOver(game)); // Switch to GameOver screen
+            game.setScreen(new GameOver(game));  // Switch to GameOver screen
         }
         batch.begin();
         Color oldColor = batch.getColor();
