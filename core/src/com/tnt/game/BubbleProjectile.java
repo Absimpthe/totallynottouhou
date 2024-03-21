@@ -16,14 +16,21 @@ public class BubbleProjectile {
     private final float amplitude; // Amplitude of the sine wave
     private final float frequency; // Frequency of the sine wave
     private float baseX; // Base horizontal position
+    private float baseY;
     public boolean isVisible = true;
+    private int type;
+    private float angle = 0; // This will keep increasing to move in a spiral
+    private float spiralRadius = 0; // Start with a small radius and increase it to expand the spiral
+    private float spiralSpeed = 1.5f;
+    private float spiralExpansionRate = 3f;
 
-    public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture) {
+    public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture, int enemytype) {
         this.shapeRenderer = new ShapeRenderer();
-
-        this.amplitude = 3f;
-        this.frequency = 0.05f;
+        this.type = enemytype;
+        this.amplitude = 4f;
+        this.frequency = 0.01f;
         this.baseX = position.x; // Store the initial horizontal position
+        this.baseY = position.y; // Store the initial vertical position
         this.velocity = velocity;
         this.sprite = new Sprite(texture); // Create a sprite from the texture
         this.sprite.setPosition(position.x, position.y); // Set the sprite's position
@@ -40,13 +47,32 @@ public class BubbleProjectile {
     public void updateProjectile(float deltaTime) {
         // Move horizontally based on velocity
         baseX += velocity.x * deltaTime;
-
-        // Calculate new vertical position using sine wave
-        float newY = sprite.getY() + amplitude * (float)Math.sin(frequency * baseX);
-
-        // Set the new position
-        sprite.setPosition(baseX, newY);
-
+        switch (type) {
+            case 1:
+                // Calculate new vertical position using sine wave
+                float newY = sprite.getY() + amplitude * (float) Math.sin(frequency * baseX);
+                // Set the new position
+                sprite.setPosition(baseX, newY);
+                break;
+            case 2:
+                // Assuming velocity.y is set for diagonal movement
+                float diagonalY = sprite.getY() + velocity.y * deltaTime;
+                sprite.setPosition(baseX, diagonalY);
+                break;
+            case 3:
+                // Update the angle to keep the projectile moving
+                angle += deltaTime * spiralSpeed; // spiralSpeed controls the rotation speed of the spiral
+                // Update the radius to expand the spiral
+                spiralRadius += deltaTime * spiralExpansionRate; // spiralExpansionRate controls how quickly the spiral expands
+                // Calculate the new position using polar coordinates (r, theta) and convert them to Cartesian coordinates (x, y)
+                float updatedX = baseX + spiralRadius * (float)Math.cos(angle);
+                float updatedY = baseY + spiralRadius * (float)Math.sin(angle);
+                // Set the projectile's position to the new calculated position
+                sprite.setPosition(updatedX, updatedY);
+                break;
+            default:
+                break;
+        }
         // Update the bounds to match the new position. DO NOT CHANGE THESE VALUES OR THE HITBOX WILL SPAWN IN THE WRONG POSITION
         bounds.setPosition(sprite.getX() + 943f, sprite.getY() + 941f);
     }
