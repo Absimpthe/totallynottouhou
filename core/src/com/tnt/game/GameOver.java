@@ -56,7 +56,7 @@ public class GameOver implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Restart the game
-                game.setScreen(new Level(game));
+                game.setScreen(new MainMenu(game));
             }
         });
 
