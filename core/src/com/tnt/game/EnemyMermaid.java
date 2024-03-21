@@ -26,7 +26,7 @@ public class EnemyMermaid {
     float health;
     public boolean isAlive = true;
     float shootTimer;
-    float shootInterval = 2.0f; // Seconds between shots
+    float shootInterval = 1.0f; // Seconds between shots
     ArrayList<BubbleProjectile> projectiles;
     private final Rectangle bounds;
     private final ShapeRenderer shapeRenderer;
@@ -36,9 +36,11 @@ public class EnemyMermaid {
     public boolean isVisible;
     public boolean hasHitbox = true;
     private final Music explosionSound;
+    public int type;
     private Color tint;
 
     public EnemyMermaid (String textureFileName, int enemyType) {
+        this.type = enemyType;
         this.isVisible = true;
         this.mermaidSheet = new Texture(Gdx.files.internal(textureFileName));
 
@@ -129,8 +131,8 @@ public class EnemyMermaid {
         TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
         Vector2 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
                 position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
-        Vector2 projectileVelocity = new Vector2(-100f, 0);
-        BubbleProjectile newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture);
+        Vector2 projectileVelocity = new Vector2(-200f, 0);
+        BubbleProjectile newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
         projectiles.add(newProjectile);
         if (MainMenu.isSFXEnabled()) {
             shootingSound.play(3f);
