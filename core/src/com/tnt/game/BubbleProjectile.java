@@ -55,25 +55,11 @@ public class BubbleProjectile {
                 sprite.setPosition(baseX, newY);
                 break;
             case 2:
-//                float angleIncrement = 360f / 8f;
-//                float speed = 5f;
-//                for (int i = 0; i < 8; i++) {
-//                    // Calculate the angle for this projectile
-//                    float angle = angleIncrement * i;
-//
-//                    // Convert the angle to radians for trigonometric functions
-//                    float radians = (float) Math.toRadians(angle);
-//
-//                    // Calculate the velocity components based on the angle
-//                    float velocityX = (float) Math.cos(radians) * speed;
-//                    float velocityY = (float) Math.sin(radians) * speed;
-//
-//                    // add code for calculating and setting new projectile position here
-//                }
-
-                float Y = sprite.getY() + amplitude * (float) Math.sin(frequency * baseX);
+                // Update the new position based on the projectile's velocity
+                float newX2 = sprite.getX() + velocity.x * deltaTime;
+                float newY2 = sprite.getY() + velocity.y * deltaTime;
                 // Set the new position
-                sprite.setPosition(baseX, Y);
+                sprite.setPosition(newX2 - 100f, newY2 - 300f);
                 break;
             case 3:
                 // Update the angle to keep the projectile moving

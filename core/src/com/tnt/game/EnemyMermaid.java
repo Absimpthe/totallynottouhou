@@ -26,7 +26,7 @@ public class EnemyMermaid {
     float health;
     public boolean isAlive = true;
     float shootTimer;
-    float shootInterval = 1.0f; // Seconds between shots
+    float shootInterval;
     ArrayList<BubbleProjectile> projectiles;
     private final Rectangle bounds;
     private final ShapeRenderer shapeRenderer;
@@ -38,6 +38,7 @@ public class EnemyMermaid {
     private final Music explosionSound;
     public int type;
     private Color tint;
+    float currentAngle = 0f;
 
     public EnemyMermaid (String textureFileName, int enemyType) {
         this.type = enemyType;
@@ -78,13 +79,14 @@ public class EnemyMermaid {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void update(float deltaTime) {
+    public void update(float deltaTime, int type) {
         stateTime += deltaTime;
         position.add(velocity);
 
         shootTimer += deltaTime;
+        shootInterval = getShootInterval(type);
         if (shootTimer >= shootInterval && isAlive) {
-            shoot();
+            shoot(type);
             shootTimer = 0;
         }
 
@@ -111,6 +113,19 @@ public class EnemyMermaid {
         }
     }
 
+    private float getShootInterval(int type) {
+        switch (type) {
+            case 1:
+                return 1.0f;
+            case 2:
+                return 0.5f;
+            case 3:
+                return 0.75f;
+            default:
+                return 1.0f;
+        }
+    }
+
     public boolean checkCollision(Rectangle otherBounds) {
         if (hasHitbox) {
             return bounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
@@ -127,13 +142,41 @@ public class EnemyMermaid {
         shapeRenderer.end();
     }
 
-    private void shoot() {
-        TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
-        Vector2 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
-                position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
-        Vector2 projectileVelocity = new Vector2(-200f, 0);
-        BubbleProjectile newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
-        projectiles.add(newProjectile);
+    private void shoot(int type) {
+        BubbleProjectile newProjectile;
+        Vector2 projectilePosition;
+        Vector2 projectileVelocity;
+        switch (type) {
+            case 1:
+//                TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
+//                projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
+//                        position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
+//                projectileVelocity = new Vector2(-200f, 0);
+//                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+//                projectiles.add(newProjectile);
+                break;
+            case 2:
+                float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians
+                float radius = 50f; // Define the radius of the radial pattern
+                // Calculate the new position based on the current angle and radius
+                projectilePosition = new Vector2(
+                        position.x + radius * (float)Math.cos(radians),
+                        position.y + radius * (float)Math.sin(radians)
+                );
+
+                projectileVelocity = new Vector2(
+                        200f * (float)Math.cos(radians),
+                        200f * (float)Math.sin(radians)
+                );
+                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+                projectiles.add(newProjectile);
+                currentAngle += 360f / 8f; // Increment the angle for the next projectile, adjust the divisor for the number of projectiles in a full circle
+
+                if (currentAngle >= 360f) {
+                    currentAngle = 0f; // Reset the angle after completing a full circle
+                }
+                break;
+        }
         if (MainMenu.isSFXEnabled()) {
             shootingSound.play(3f);
         }
@@ -176,7 +219,7 @@ public class EnemyMermaid {
 
     public void takeDamage(float amount) {
         health -= amount;
-        if (health <= 0) {
+        if (health == 0) {
             isAlive = false;
             isDying = true;
             onMermaidDeath();

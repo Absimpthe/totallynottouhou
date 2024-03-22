@@ -82,8 +82,10 @@ public class Level implements Screen {
             for (EnemyMermaid enemy : enemies) {
                 if (enemy.checkCollision(playerProjectile.getBounds())) {
                     enemy.takeDamage(50f);
-                    playerProjectile.dispose(); // Dispose of the player projectile resources
-                    playerProjectileIterator.remove(); // Remove the projectile from the player's list
+                    if (enemy.health >= 0) {
+                        playerProjectile.dispose(); // Dispose of the player projectile resources
+                        playerProjectileIterator.remove(); // Remove the projectile from the player's list
+                    }
                     if (enemy.health == 0) { // Must be exactly 0 to prevent score from incrementing again after death
                         gameScore.addScore(500);
                     }
@@ -129,7 +131,7 @@ public class Level implements Screen {
         while (iterator.hasNext()) {
             EnemyMermaid enemy = iterator.next();
             // First, update the enemy's state for this frame
-            enemy.update(deltaTime);
+            enemy.update(deltaTime, enemy.type);
 
             // Then, check if the enemy has moved off-screen after the update. DO NOT CHANGE THIS X VALUE
             if (enemy.position.x < -1000) {
@@ -144,7 +146,6 @@ public class Level implements Screen {
     private void spawnEnemy(int currentScore) {
         int enemyType;
         EnemyMermaid newEnemy = null;
-        System.out.println(currentScore); // debug print statement
         if (currentScore < 2000) {
             newEnemy = new EnemyMermaid("mermaid.png", 1);
         } else if (currentScore >= 2000 && currentScore < 5000) {
