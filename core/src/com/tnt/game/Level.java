@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Level implements Screen{
+public class Level implements Screen {
     private final aquamarine game;
     private SpriteBatch batch;
     private SpriteBatch bgbatch;
@@ -32,6 +32,7 @@ public class Level implements Screen{
     public float currentHp;
     public GameScore gameScore;
     public float currentScore;
+    private boolean toggleEnemyType = false;
 
     public Level(aquamarine game) {
         this.game = game;
@@ -55,6 +56,7 @@ public class Level implements Screen{
         gameStatus.addToStage(stage); // Add the setting button to the stage
 
         this.gameScore = new GameScore(stage, skin);
+        this.currentScore = gameScore.getScore();
     }
 
     private void checkCollisions() {
@@ -81,9 +83,11 @@ public class Level implements Screen{
             for (EnemyMermaid enemy : enemies) {
                 if (enemy.checkCollision(playerProjectile.getBounds())) {
                     enemy.takeDamage(50f);
-                    gameScore.addScore(500);
                     playerProjectile.dispose(); // Dispose of the player projectile resources
                     playerProjectileIterator.remove(); // Remove the projectile from the player's list
+                    if (enemy.health == 0) { // Must be exactly 0 to prevent score from incrementing again after death
+                        gameScore.addScore(500);
+                    }
                 }
             }
         }
@@ -139,18 +143,32 @@ public class Level implements Screen{
     }
 
     private void spawnEnemy() {
-        // Spawn enemy at desired position
-        EnemyMermaid newEnemy = new EnemyMermaid("mermaid.png", 1);
-        // Use the height of the first frame of the animation for initial positioning
-        float enemyHeight = newEnemy.mermaidAnimation.getKeyFrames()[0].getRegionHeight();
-        // Calculate a random y position within the screen height bounds
-        float randomY = (float) Math.random() * (Gdx.graphics.getHeight() - (enemyHeight * 2));
+        int enemyType;
+        EnemyMermaid newEnemy = null;
+        if (currentScore < 2000) {
+            newEnemy = new EnemyMermaid("mermaid.png", 1);
+        } else if (currentScore >= 2000 && currentScore < 5000) {
+            System.out.println("spawning enemy type 2");
+            spawnInterval = 3f;
+            // Spawn 2 different enemy types alternately
+            enemyType = toggleEnemyType ? 2 : 1;
+            newEnemy = new EnemyMermaid("mermaid.png", enemyType);
+            toggleEnemyType = !toggleEnemyType;
+        } else if (currentScore >= 5000 && currentScore <= 10000) {
+            // difficulty increase
+        } // add more difficulty settings here
+        if (newEnemy != null) { // Verify that newEnemy is not null before spawning
+            // Use the height of the first frame of the animation for initial positioning
+            float enemyHeight = newEnemy.mermaidAnimation.getKeyFrames()[0].getRegionHeight();
+            // Calculate a random y position within the screen height bounds
+            float randomY = (float) Math.random() * (Gdx.graphics.getHeight() - (enemyHeight * 2));
 
-        // Set the enemy's initial position to spawn on the right edge of the screen at a random y-coordinate
-        newEnemy.position.set(Gdx.graphics.getWidth(), randomY);
+            // Set the enemy's initial position to spawn on the right edge of the screen at a random y-coordinate
+            newEnemy.position.set(Gdx.graphics.getWidth(), randomY);
 
-        // Add the new enemy to your collection of enemies
-        enemies.add(newEnemy);
+            // Add the new enemy to your collection of enemies
+            enemies.add(newEnemy);
+        }
     }
 
     public void draw(SpriteBatch batch) {

@@ -13,7 +13,7 @@ public class GameScore {
         scoreLabel = new Label("Score: 0", skin);
 
         // Set the position of the score label (adjust as needed)
-        // Assuming you want to place it under the heart images which might be around y=660
+        // Assuming you want to place it under the heart images which might be around y = 660
         scoreLabel.setPosition(10, 620); // Adjust x, y to fit under your heart images
 
         // Add the score label to the stage so it's rendered and managed by the stage
@@ -29,7 +29,6 @@ public class GameScore {
     }
 
     public int getScore() {
-        // In case you need to access the current score value
         return score;
     }
 }

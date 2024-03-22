@@ -177,7 +177,6 @@ public class EnemyMermaid {
     public void takeDamage(float amount) {
         health -= amount;
         if (health <= 0) {
-            health = 0; // Prevent health from going below 0
             isAlive = false;
             isDying = true;
             onMermaidDeath();
