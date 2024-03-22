@@ -31,7 +31,7 @@ public class Level implements Screen {
     private GameStatus gameStatus;
     public float currentHp;
     public GameScore gameScore;
-    public float currentScore;
+    public int currentScore;
     private boolean toggleEnemyType = false;
 
     public Level(aquamarine game) {
@@ -56,7 +56,6 @@ public class Level implements Screen {
         gameStatus.addToStage(stage); // Add the setting button to the stage
 
         this.gameScore = new GameScore(stage, skin);
-        this.currentScore = gameScore.getScore();
     }
 
     private void checkCollisions() {
@@ -116,13 +115,13 @@ public class Level implements Screen {
         }
     }
 
-    public void updateSpawn(float deltaTime) {
+    public void updateSpawn(float deltaTime, GameScore gameScore) {
+        currentScore = gameScore.getScore(); // problematic line
         // Update spawn timer
         spawnTimer += deltaTime;
-
         // Check if it's time to spawn a new enemy
         if (spawnTimer >= spawnInterval) {
-            spawnEnemy();
+            spawnEnemy(currentScore);
             spawnTimer = 0; // Reset the spawn timer
         }
 
@@ -142,13 +141,13 @@ public class Level implements Screen {
         removeDeadEnemies();
     }
 
-    private void spawnEnemy() {
+    private void spawnEnemy(int currentScore) {
         int enemyType;
         EnemyMermaid newEnemy = null;
+        System.out.println(currentScore); // debug print statement
         if (currentScore < 2000) {
             newEnemy = new EnemyMermaid("mermaid.png", 1);
         } else if (currentScore >= 2000 && currentScore < 5000) {
-            System.out.println("spawning enemy type 2");
             spawnInterval = 3f;
             // Spawn 2 different enemy types alternately
             enemyType = toggleEnemyType ? 2 : 1;
@@ -225,7 +224,7 @@ public class Level implements Screen {
         draw(batch);
         batch.end();
         player.update(delta);
-        updateSpawn(delta);
+        updateSpawn(delta, gameScore);
         // Fade-in effect
         float fadeSpeed = 1f;
         alpha -= fadeSpeed * delta;
