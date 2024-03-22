@@ -40,7 +40,7 @@ public class Player {
     private boolean isFading;
     private Level level;
     public boolean playerIsDead = false;
-    private GameScore gameScore;
+    public int score = 0;
 
     public Player(String textureFileName, aquamarine game) {
         this.game = game;
@@ -63,7 +63,6 @@ public class Player {
 
         // Shape renderer used for debugging
         this.shapeRenderer = new ShapeRenderer();
-        this.gameScore = gameScore;
     }
 
     public void update(float deltaTime) {
@@ -204,6 +203,10 @@ public class Player {
         }
     }
 
+    public void notifyScoreChanged(int currentScore) {
+        this.score = currentScore;
+    }
+
     public void draw(SpriteBatch batch) {
         if (isVisible) {
             playerSprite.draw(batch);
@@ -224,7 +227,7 @@ public class Player {
         fadeAlpha += delta * 0.5f;
         if (fadeAlpha > 1) {
             fadeAlpha = 1;
-            game.setScreen(new GameOver(game));  // Switch to GameOver screen
+            game.setScreen(new GameOver(game, this.score));  // Switch to GameOver screen
         }
         batch.begin();
         Color oldColor = batch.getColor();

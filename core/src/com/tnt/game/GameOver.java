@@ -17,10 +17,10 @@ public class GameOver implements Screen {
     private final Skin skin;
     private int finalScore;
 
-    public GameOver(aquamarine game) {
+    public GameOver(aquamarine game, int finalScore) {
         this.game = game;
         this.skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
-        // this.finalScore = finalScore;
+        this.finalScore = finalScore;
     }
     
     @Override
@@ -29,21 +29,22 @@ public class GameOver implements Screen {
 
         Label gameOverLabel = new Label("Game Over", skin, "title");
         // Position the Game Over label a bit higher than the center
-        gameOverLabel.setPosition(Gdx.graphics.getWidth() / 2 - gameOverLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + gameOverLabel.getHeight() + 20);
+        gameOverLabel.setPosition(Gdx.graphics.getWidth() / 2 - gameOverLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 100);
         
-        // Label scoreLabel = new Label("Score: " + finalScore, skin);
-        // scoreLabel.setPosition(Gdx.graphics.getWidth() / 2 - scoreLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + scoreLabel.getHeight() - 20);
+        Label scoreLabel = new Label("Score: " + this.finalScore, skin, "subtitle");
+        // scoreLabel.setPosition(Gdx.graphics.getWidth() / 2 - scoreLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + scoreLabel.getHeight() + 5);
+        scoreLabel.setPosition(Gdx.graphics.getWidth() / 2 - scoreLabel.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 20);
 
         TextButton restartButton = new TextButton("Restart", skin);
         restartButton.setSize(600, 100);
         // Position the restart button a bit lower than the Game Over label
-        restartButton.setPosition(Gdx.graphics.getWidth() / 2 - restartButton.getWidth() / 2, gameOverLabel.getY() - restartButton.getHeight() - 80); // 20 pixels gap from the label
-        
+        restartButton.setPosition(Gdx.graphics.getWidth() / 2 - restartButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 100);
+            
         TextButton backToMenuButton = new TextButton("Back To Menu", skin);
         backToMenuButton.setSize(600, 100);
         // Position the Back To Menu button a bit lower than the Restart button
-        backToMenuButton.setPosition(Gdx.graphics.getWidth() / 2 - backToMenuButton.getWidth() / 2, restartButton.getY() - backToMenuButton.getHeight() - 50); // 20 pixels gap from the restart button
-        
+        backToMenuButton.setPosition(Gdx.graphics.getWidth() / 2 - backToMenuButton.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 220);
+         
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -61,6 +62,7 @@ public class GameOver implements Screen {
         });
 
         stage.addActor(gameOverLabel);
+        stage.addActor(scoreLabel);
         stage.addActor(restartButton);
         stage.addActor(backToMenuButton);
 

@@ -88,6 +88,8 @@ public class Level implements Screen {
                     }
                     if (enemy.health == 0) { // Must be exactly 0 to prevent score from incrementing again after death
                         gameScore.addScore(500);
+                        currentScore = gameScore.getScore();
+                        player.notifyScoreChanged(currentScore);
                     }
                 }
             }
