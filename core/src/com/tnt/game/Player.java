@@ -108,6 +108,10 @@ public class Player {
         return playerbounds.overlaps(otherBounds); // Check if player's bounds overlap with another object's bounds
     }
 
+    public Vector2 getPlayerPos() {
+        return new Vector2(playerSprite.getX(), playerSprite.getY());
+    }
+
     public float takeDamage(float damage) {
         currentHp -= damage; // Decrease HP by damage taken
         if (currentHp <= 0) {

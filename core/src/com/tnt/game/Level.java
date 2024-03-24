@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -25,7 +26,7 @@ public class Level implements Screen {
     private Texture blackTexture;
     private float alpha = 1f;
     private float spawnTimer;
-    private float spawnInterval = 5f;
+    private float spawnInterval = 4f;
     private HealthStatus healthStatus;
     private Stage stage;
     private GameStatus gameStatus;
@@ -122,7 +123,8 @@ public class Level implements Screen {
     }
 
     public void updateSpawn(float deltaTime, GameScore gameScore) {
-        currentScore = gameScore.getScore(); // problematic line
+        Vector2 playerPos = player.getPlayerPos();
+        currentScore = gameScore.getScore();
         // Update spawn timer
         spawnTimer += deltaTime;
         // Check if it's time to spawn a new enemy
@@ -135,7 +137,7 @@ public class Level implements Screen {
         while (iterator.hasNext()) {
             EnemyMermaid enemy = iterator.next();
             // First, update the enemy's state for this frame
-            enemy.update(deltaTime, enemy.type);
+            enemy.update(deltaTime, enemy.type, playerPos);
 
             // Then, check if the enemy has moved off-screen after the update. DO NOT CHANGE THIS X VALUE
             if (enemy.position.x < -1000) {
@@ -152,13 +154,13 @@ public class Level implements Screen {
         EnemyMermaid newEnemy = null;
         if (currentScore < 2000) {
             newEnemy = new EnemyMermaid("mermaid.png", 1);
-        } else if (currentScore >= 2000 && currentScore < 5000) {
-            spawnInterval = 3f;
+        } else if (currentScore >= 2000 && currentScore < 6000) {
+            spawnInterval = 6f;
             // Spawn 2 different enemy types alternately
             enemyType = toggleEnemyType ? 2 : 1;
             newEnemy = new EnemyMermaid("mermaid.png", enemyType);
             toggleEnemyType = !toggleEnemyType;
-        } else if (currentScore >= 5000 && currentScore <= 10000) {
+        } else if (currentScore >= 6000 && currentScore <= 20000) {
             // difficulty increase
         } // add more difficulty settings here
         if (newEnemy != null) { // Verify that newEnemy is not null before spawning

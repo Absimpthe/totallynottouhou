@@ -59,7 +59,7 @@ public class BubbleProjectile {
                 float newX2 = sprite.getX() + velocity.x * deltaTime;
                 float newY2 = sprite.getY() + velocity.y * deltaTime;
                 // Set the new position
-                sprite.setPosition(newX2 - 100f, newY2 - 300f);
+                sprite.setPosition(newX2, newY2);
                 break;
             case 3:
                 // Update the angle to keep the projectile moving
