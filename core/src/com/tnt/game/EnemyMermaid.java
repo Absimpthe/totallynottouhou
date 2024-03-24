@@ -38,7 +38,10 @@ public class EnemyMermaid {
     private final Music explosionSound;
     public int type;
     private Color tint;
-    float currentAngle = 0f;
+    private float currentAngle = 0f;
+    private int waveCounter = -2; // DO NOT CHANGE THIS VALUE. I DON'T KNOW WHY IT NEEDS TO BE -2 TO WORK BUT IT DOES
+    private float timeSinceLastWave = 0f;
+    private float homingSpeed = 150f;
 
     public EnemyMermaid (String textureFileName, int enemyType) {
         this.type = enemyType;
@@ -79,14 +82,18 @@ public class EnemyMermaid {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void update(float deltaTime, int type) {
+    public void update(float deltaTime, int type, Vector2 playerPos) {
         stateTime += deltaTime;
         position.add(velocity);
 
         shootTimer += deltaTime;
         shootInterval = getShootInterval(type);
+        if (waveCounter >= 6) {
+            // Only update the timer if the current wave is complete
+            timeSinceLastWave += deltaTime;
+        }
         if (shootTimer >= shootInterval && isAlive) {
-            shoot(type);
+            shoot(type, playerPos);
             shootTimer = 0;
         }
 
@@ -118,7 +125,7 @@ public class EnemyMermaid {
             case 1:
                 return 1.0f;
             case 2:
-                return 0.5f;
+                return 0.3f;
             case 3:
                 return 0.75f;
             default:
@@ -142,39 +149,70 @@ public class EnemyMermaid {
         shapeRenderer.end();
     }
 
-    private void shoot(int type) {
+    private void shoot(int type, Vector2 playerPos) {
+        if (type == 2) {
+            if (waveCounter >= 6) {
+                if (timeSinceLastWave < 2.0f) {
+                    return; // Wait until the gap time has passed
+                } else {
+                    // Reset for a new wave
+                    waveCounter = 0;
+                    timeSinceLastWave = 0f;
+                }
+            }
+        }
+
         BubbleProjectile newProjectile;
         Vector2 projectilePosition;
         Vector2 projectileVelocity;
         switch (type) {
             case 1:
+<<<<<<< HEAD
                TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
                projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
                        position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
                projectileVelocity = new Vector2(-200f, 0);
                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
                projectiles.add(newProjectile);
+=======
+                TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
+                projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
+                        position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
+                projectileVelocity = new Vector2(-200f, 0);
+                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+                projectiles.add(newProjectile);
+>>>>>>> e610cacfe6539bd63118c23bb597f5d17a031abb
                 break;
             case 2:
+                System.out.println(waveCounter); // debug print statement
                 float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians
-                float radius = 50f; // Define the radius of the radial pattern
+                float radius = 40f; // Define the radius of the radial pattern
                 // Calculate the new position based on the current angle and radius
                 projectilePosition = new Vector2(
-                        position.x + radius * (float)Math.cos(radians),
-                        position.y + radius * (float)Math.sin(radians)
+                        position.x + radius * (float)Math.cos(radians) - 900f,
+                        position.y + radius * (float)Math.sin(radians) - 910f
                 );
 
                 projectileVelocity = new Vector2(
-                        200f * (float)Math.cos(radians),
-                        200f * (float)Math.sin(radians)
+                        100f * (float)Math.cos(radians),
+                        100f * (float)Math.sin(radians)
                 );
                 newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
                 projectiles.add(newProjectile);
-                currentAngle += 360f / 8f; // Increment the angle for the next projectile, adjust the divisor for the number of projectiles in a full circle
+                currentAngle += 360f / 6f; // Increment the angle for the next projectile
 
                 if (currentAngle >= 360f) {
                     currentAngle = 0f; // Reset the angle after completing a full circle
                 }
+                System.out.println(currentAngle);
+                waveCounter++;
+                break;
+            case 3:
+                projectilePosition = new Vector2 (position.x, position.y);
+                Vector2 directionToTarget = playerPos.sub(projectilePosition).nor(); // Normalized direction vector towards the target
+                projectileVelocity = new Vector2(directionToTarget.x * homingSpeed, directionToTarget.y * homingSpeed); // Velocity adjusted towards the target
+                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+                projectiles.add(newProjectile);
                 break;
         }
         if (MainMenu.isSFXEnabled()) {
