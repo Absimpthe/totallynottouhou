@@ -38,7 +38,9 @@ public class EnemyMermaid {
     private final Music explosionSound;
     public int type;
     private Color tint;
-    float currentAngle = 0f;
+    private float currentAngle = 0f;
+    private int waveCounter = -2; // DO NOT CHANGE THIS VALUE. I DON'T KNOW WHY IT NEEDS TO BE -2 TO WORK BUT IT DOES
+    private float timeSinceLastWave = 0f;
 
     public EnemyMermaid (String textureFileName, int enemyType) {
         this.type = enemyType;
@@ -85,6 +87,10 @@ public class EnemyMermaid {
 
         shootTimer += deltaTime;
         shootInterval = getShootInterval(type);
+        if (waveCounter >= 6) {
+            // Only update the timer if the current wave is complete
+            timeSinceLastWave += deltaTime;
+        }
         if (shootTimer >= shootInterval && isAlive) {
             shoot(type);
             shootTimer = 0;
@@ -118,7 +124,7 @@ public class EnemyMermaid {
             case 1:
                 return 1.0f;
             case 2:
-                return 0.5f;
+                return 0.3f;
             case 3:
                 return 0.75f;
             default:
@@ -143,6 +149,18 @@ public class EnemyMermaid {
     }
 
     private void shoot(int type) {
+        if (type == 2) {
+            if (waveCounter >= 6) {
+                if (timeSinceLastWave < 2.0f) {
+                    return; // Wait until the gap time has passed
+                } else {
+                    // Reset for a new wave
+                    waveCounter = 0;
+                    timeSinceLastWave = 0f;
+                }
+            }
+        }
+
         BubbleProjectile newProjectile;
         Vector2 projectilePosition;
         Vector2 projectileVelocity;
@@ -156,6 +174,7 @@ public class EnemyMermaid {
                 projectiles.add(newProjectile);
                 break;
             case 2:
+                System.out.println(waveCounter); // debug print statement
                 float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians
                 float radius = 50f; // Define the radius of the radial pattern
                 // Calculate the new position based on the current angle and radius
@@ -175,6 +194,7 @@ public class EnemyMermaid {
                 if (currentAngle >= 360f) {
                     currentAngle = 0f; // Reset the angle after completing a full circle
                 }
+                waveCounter++;
                 break;
         }
         if (MainMenu.isSFXEnabled()) {

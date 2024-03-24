@@ -148,15 +148,15 @@ public class Level implements Screen {
     private void spawnEnemy(int currentScore) {
         int enemyType;
         EnemyMermaid newEnemy = null;
-        if (currentScore < 1000) {
+        if (currentScore < 2000) {
             newEnemy = new EnemyMermaid("mermaid.png", 1);
-        } else if (currentScore >= 1000 && currentScore < 10000) {
+        } else if (currentScore >= 2000 && currentScore < 6000) {
             spawnInterval = 7f;
             // Spawn 2 different enemy types alternately
             enemyType = toggleEnemyType ? 2 : 1;
             newEnemy = new EnemyMermaid("mermaid.png", enemyType);
             toggleEnemyType = !toggleEnemyType;
-        } else if (currentScore >= 10000 && currentScore <= 20000) {
+        } else if (currentScore >= 6000 && currentScore <= 20000) {
             // difficulty increase
         } // add more difficulty settings here
         if (newEnemy != null) { // Verify that newEnemy is not null before spawning
