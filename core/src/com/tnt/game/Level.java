@@ -33,6 +33,7 @@ public class Level implements Screen {
     public GameScore gameScore;
     public int currentScore;
     private boolean toggleEnemyType = false;
+    private boolean isPaused = false;
 
     public Level(aquamarine game) {
         this.game = game;
@@ -52,10 +53,11 @@ public class Level implements Screen {
         // Initialize HealthStatus (Heart Images)
         this.healthStatus = new HealthStatus(game, stage);
 
-        this.gameStatus = new GameStatus(game, skin);
+        this.gameStatus = new GameStatus(this,game, skin);
         gameStatus.addToStage(stage); // Add the setting button to the stage
 
         this.gameScore = new GameScore(stage, skin);
+        gameScore.addToStage((stage));
     }
 
     private void checkCollisions() {
@@ -173,6 +175,10 @@ public class Level implements Screen {
         }
     }
 
+    public void togglePause() {
+        isPaused = !isPaused;
+    }    
+
     public void draw(SpriteBatch batch) {
         // Draw all enemies
         for (EnemyMermaid enemy : enemies) {
@@ -212,6 +218,7 @@ public class Level implements Screen {
         blackTexture = new Texture(pixmap);
         pixmap.dispose();
     }
+
     @Override
     public void render(float delta) {
         // Clear the screen
@@ -221,55 +228,54 @@ public class Level implements Screen {
         bgbatch.begin();
         ParallaxBG.render(bgbatch);
         bgbatch.end();
-        // Draw the sprites
-        batch.begin();
-        player.draw(batch);
-        draw(batch);
-        batch.end();
-        player.update(delta);
-        updateSpawn(delta, gameScore);
-        // Fade-in effect
-        float fadeSpeed = 1f;
-        alpha -= fadeSpeed * delta;
-        alpha = Math.max(alpha, 0); // Ensure alpha doesn't go below 0
-        // Enable blending and draw the black texture with the current alpha
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        fadebatch.begin();
-        fadebatch.setColor(1, 1, 1, alpha); // Set the batch color to include the alpha for transparency
-        fadebatch.draw(blackTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Draw full screen
-        fadebatch.setColor(Color.WHITE); // Reset batch color to avoid affecting other textures
-        fadebatch.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        
+        if (!isPaused) {
+            // Game update and logic
+            batch.begin();
+            player.draw(batch);
+            draw(batch);
+            batch.end();
+            player.update(delta);
+            updateSpawn(delta, gameScore);
 
-
-        stage.act(delta);
-        stage.draw();
-        // Used to draw hitboxes for debugging. Comment out if not needed, DO NOT DELETE
-        player.drawHitbox();
-        for (EnemyMermaid enemy : enemies) {
-            enemy.drawHitbox();
-            // Now iterate over each projectile managed by the current enemy
-            Iterator<BubbleProjectile> iterator = enemy.getProjectiles().iterator();
-            while (iterator.hasNext()) {
-                BubbleProjectile projectile = iterator.next();
-                projectile.drawHitbox();
-            }
-        }
-        if (player.playerIsDead) { // Upon player death, stop all vfx and sfx
-            if (MainMenu.isSFXEnabled()) {
-                levelbgm.stop();
-                player.shootingSound.stop();
-                for (EnemyMermaid enemy : enemies) {
-                    enemy.shootingSound.stop();
-                    enemy.isAlive = false;
-                    Iterator<BubbleProjectile> iterator = enemy.getProjectiles().iterator();
-                    while (iterator.hasNext()) {
-                        BubbleProjectile projectile = iterator.next();
-                        projectile.isVisible = false; // Set to invisible. Disposing directly will make it show up as a black box
-                    }
+            // Debugging hitboxes (consider moving this outside the if statement if you want it to show during pause)
+            player.drawHitbox();
+            for (EnemyMermaid enemy : enemies) {
+                enemy.drawHitbox();
+                for (BubbleProjectile projectile : enemy.getProjectiles()) {
+                    projectile.drawHitbox();
                 }
             }
         }
+
+        // Fade-in effect (consider if this should be outside the pause logic)
+        float fadeSpeed = 1f;
+        alpha -= fadeSpeed * delta;
+        alpha = Math.max(alpha, 0);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        fadebatch.begin();
+        fadebatch.setColor(1, 1, 1, alpha);
+        fadebatch.draw(blackTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        fadebatch.setColor(Color.WHITE);
+        fadebatch.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        // Sound effects and music (consider if this should stop regardless of pause state)
+        if (player.playerIsDead) {
+            levelbgm.stop();
+            player.shootingSound.stop();
+            for (EnemyMermaid enemy : enemies) {
+                enemy.shootingSound.stop();
+                enemy.isAlive = false;
+                for (BubbleProjectile projectile : enemy.getProjectiles()) {
+                    projectile.isVisible = false;
+                }
+            }
+        }
+
+        // UI rendering
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override

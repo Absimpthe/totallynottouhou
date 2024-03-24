@@ -148,12 +148,12 @@ public class EnemyMermaid {
         Vector2 projectileVelocity;
         switch (type) {
             case 1:
-//                TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
-//                projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
-//                        position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
-//                projectileVelocity = new Vector2(-200f, 0);
-//                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
-//                projectiles.add(newProjectile);
+               TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
+               projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
+                       position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
+               projectileVelocity = new Vector2(-200f, 0);
+               newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+               projectiles.add(newProjectile);
                 break;
             case 2:
                 float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians

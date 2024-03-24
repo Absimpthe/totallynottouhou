@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class GameScore {
     private int score = 0; // Initialize score to 0
     private Label scoreLabel; // Label to display the score
+    private Stage stage;
 
     public GameScore(Stage stage, Skin skin) {
         // Create a Label using the skin and set its initial text to "Score: 0"
@@ -15,9 +16,6 @@ public class GameScore {
         // Set the position of the score label (adjust as needed)
         // Assuming you want to place it under the heart images which might be around y = 660
         scoreLabel.setPosition(10, 620); // Adjust x, y to fit under your heart images
-
-        // Add the score label to the stage so it's rendered and managed by the stage
-        stage.addActor(scoreLabel);
     }
 
     public void addScore(int value) {
@@ -30,5 +28,10 @@ public class GameScore {
 
     public int getScore() {
         return score;
+    }
+
+    public void addToStage(Stage stage) {
+        this.stage = stage; // Save the stage reference
+        stage.addActor(scoreLabel); // Add the scoreLabel to the stage
     }
 }

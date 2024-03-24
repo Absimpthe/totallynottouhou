@@ -26,26 +26,28 @@ public class GameStatus {
     private Stage stage;
     private ImageButton settingsButton;
     private Music levelbgm;
+    private Level level;
     
     public void setLevelBGM(Music levelbgm) {
         this.levelbgm = levelbgm;
     }
 
-    public GameStatus(aquamarine game, Skin skin) {
+    public GameStatus(Level level,aquamarine game, Skin skin) {
+        this.level = level;
         this.game = game;
         Texture settingsTexture = new Texture(Gdx.files.internal("settingsicon.png"));
         Drawable settingsDrawable = new TextureRegionDrawable(new TextureRegion(settingsTexture));
         settingsButton = new ImageButton(settingsDrawable); // Removed local declaration
         settingsButton.setSize(50, 50); // Set size of button (in pixels)
-        settingsButton.setPosition(Gdx.graphics.getWidth() - settingsButton.getWidth() - 10, 10); // Position in bottom-right
+        settingsButton.setPosition(Gdx.graphics.getWidth() - settingsButton.getWidth() - 1220, 10); // Position in bottom-right
         
         settingsButton.addListener(new ClickListener() {
-            
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                level.togglePause();
+
                 Dialog optionsDialog = new Dialog("", skin);
                 optionsDialog.text("Choose an option");
-
 
                 // -------------------------------
                 // Add the "Resume" button 
@@ -54,7 +56,12 @@ public class GameStatus {
                 optionsDialog.getButtonTable().add(resumeButton).size(370, 95).pad(10).padTop(0).padBottom(20).row(); // Adjust the size as needed
                 resumeButton.setPosition(200, 200);
                 resumeButton.addListener(new ClickListener() {
-            });
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        level.togglePause();  // Unpause the game
+                        optionsDialog.hide();  // Close the dialog
+                    }
+                });
 
                 // -------------------------------
                 // Add the "Start Over" button 
@@ -119,7 +126,7 @@ public class GameStatus {
                     }
                 });
 
-                                // -------------------------------
+                // -------------------------------
                 // Add the "Back to Menu" button 
                 // -------------------------------
                 TextButton backToMenuButton = new TextButton("Back to Menu", skin);
