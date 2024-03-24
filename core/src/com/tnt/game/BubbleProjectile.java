@@ -27,7 +27,7 @@ public class BubbleProjectile {
     public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture, int enemytype) {
         this.shapeRenderer = new ShapeRenderer();
         this.type = enemytype;
-        this.amplitude = 4f;
+        this.amplitude = 5f;
         this.frequency = 0.01f;
         this.baseX = position.x; // Store the initial horizontal position
         this.baseY = position.y; // Store the initial vertical position

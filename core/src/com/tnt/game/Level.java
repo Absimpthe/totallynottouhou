@@ -208,9 +208,9 @@ public class Level implements Screen {
         --------------- */
         bgbatch = new SpriteBatch();
         ParallaxBG = new Parallax();
-        ParallaxBG.addLayer(new Texture("far.png"), 30f); // Farthest layer
-        ParallaxBG.addLayer(new Texture("sand.png"), 60f); // Middle layer
-        ParallaxBG.addLayer(new Texture("foreground-merged.png"), 90f);   // Closest layer
+        ParallaxBG.addLayer(new Texture("far.png"), 70f); // Farthest layer
+        ParallaxBG.addLayer(new Texture("sand.png"), 90f); // Middle layer
+        ParallaxBG.addLayer(new Texture("foreground-merged.png"), 120f);   // Closest layer
 
         // Initialize pixmap for fade-in effect
         fadebatch = new SpriteBatch();
