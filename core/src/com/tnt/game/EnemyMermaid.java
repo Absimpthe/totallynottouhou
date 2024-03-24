@@ -148,29 +148,29 @@ public class EnemyMermaid {
         Vector2 projectileVelocity;
         switch (type) {
             case 1:
-//                TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
-//                projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
-//                        position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
-//                projectileVelocity = new Vector2(-200f, 0);
-//                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
-//                projectiles.add(newProjectile);
+                TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
+                projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
+                        position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
+                projectileVelocity = new Vector2(-200f, 0);
+                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+                projectiles.add(newProjectile);
                 break;
             case 2:
                 float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians
                 float radius = 50f; // Define the radius of the radial pattern
                 // Calculate the new position based on the current angle and radius
                 projectilePosition = new Vector2(
-                        position.x + radius * (float)Math.cos(radians),
-                        position.y + radius * (float)Math.sin(radians)
+                        position.x + radius * (float)Math.cos(radians) - 875f,
+                        position.y + radius * (float)Math.sin(radians) - 910f
                 );
 
                 projectileVelocity = new Vector2(
-                        200f * (float)Math.cos(radians),
-                        200f * (float)Math.sin(radians)
+                        100f * (float)Math.cos(radians),
+                        100f * (float)Math.sin(radians)
                 );
                 newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
                 projectiles.add(newProjectile);
-                currentAngle += 360f / 8f; // Increment the angle for the next projectile, adjust the divisor for the number of projectiles in a full circle
+                currentAngle += 360f / 6f; // Increment the angle for the next projectile
 
                 if (currentAngle >= 360f) {
                     currentAngle = 0f; // Reset the angle after completing a full circle
