@@ -72,7 +72,7 @@ public class EnemyMermaid {
         this.projectiles = new ArrayList<>();
         this.position = new Vector2(Gdx.graphics.getWidth() - frameWidth, Gdx.graphics.getHeight() / 2f - frameHeight / 2f);
         this.velocity = new Vector2(-1, 0);
-        this.health = 100;
+        this.health = 200;
         this.projectileTexture = new Texture(Gdx.files.internal("bubble.png"));
         this.shootingSound = Gdx.audio.newSound(Gdx.files.internal("bubbleshootsound.wav"));
         this.shootTimer = 0;
@@ -170,7 +170,7 @@ public class EnemyMermaid {
                 TextureRegion currentFrame = mermaidAnimation.getKeyFrame(stateTime, true);
                 projectilePosition = new Vector2(position.x + (currentFrame.getRegionWidth() * 0.5f) - 970f,
                         position.y + (currentFrame.getRegionHeight() * 0.5f) - 920f);
-                projectileVelocity = new Vector2(-200f, 0);
+                projectileVelocity = new Vector2(-250f, 0);
                 newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
                 projectiles.add(newProjectile);
                 break;
@@ -185,8 +185,8 @@ public class EnemyMermaid {
                 );
 
                 projectileVelocity = new Vector2(
-                        100f * (float)Math.cos(radians),
-                        100f * (float)Math.sin(radians)
+                        400f * (float)Math.cos(radians),
+                        400f * (float)Math.sin(radians)
                 );
                 newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
                 projectiles.add(newProjectile);
