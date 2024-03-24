@@ -152,7 +152,7 @@ public class MainMenu implements Screen {
         instructionsDialog.getTitleTable().add(titleLabel).padTop(60).expandX().fillX(); // Adjust padTop as needed for position
 
         // Configure content label
-        Label instructionsLabel = new Label("Your game instructions go here.\n yfgedsahxsefdsughwaea\ndhuwebafnsdxwfed", skin);
+        Label instructionsLabel = new Label("The merfolk don't like it when humans intrude in their territory.\n\n Move the mouse to dodge their attacks, and try to survive as long as possible...", skin);
         instructionsLabel.setWrap(true); // Enable word-wrap
         instructionsLabel.setAlignment(Align.center); // Align text to center
         instructionsDialog.getContentTable().add(instructionsLabel).width(680).padTop(70).center();

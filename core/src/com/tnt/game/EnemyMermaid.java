@@ -41,6 +41,7 @@ public class EnemyMermaid {
     private float currentAngle = 0f;
     private int waveCounter = -2; // DO NOT CHANGE THIS VALUE. I DON'T KNOW WHY IT NEEDS TO BE -2 TO WORK BUT IT DOES
     private float timeSinceLastWave = 0f;
+    private float homingSpeed = 150f;
 
     public EnemyMermaid (String textureFileName, int enemyType) {
         this.type = enemyType;
@@ -81,7 +82,7 @@ public class EnemyMermaid {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void update(float deltaTime, int type) {
+    public void update(float deltaTime, int type, Vector2 playerPos) {
         stateTime += deltaTime;
         position.add(velocity);
 
@@ -92,7 +93,7 @@ public class EnemyMermaid {
             timeSinceLastWave += deltaTime;
         }
         if (shootTimer >= shootInterval && isAlive) {
-            shoot(type);
+            shoot(type, playerPos);
             shootTimer = 0;
         }
 
@@ -148,7 +149,7 @@ public class EnemyMermaid {
         shapeRenderer.end();
     }
 
-    private void shoot(int type) {
+    private void shoot(int type, Vector2 playerPos) {
         if (type == 2) {
             if (waveCounter >= 6) {
                 if (timeSinceLastWave < 2.0f) {
@@ -176,10 +177,10 @@ public class EnemyMermaid {
             case 2:
                 System.out.println(waveCounter); // debug print statement
                 float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians
-                float radius = 50f; // Define the radius of the radial pattern
+                float radius = 40f; // Define the radius of the radial pattern
                 // Calculate the new position based on the current angle and radius
                 projectilePosition = new Vector2(
-                        position.x + radius * (float)Math.cos(radians) - 875f,
+                        position.x + radius * (float)Math.cos(radians) - 900f,
                         position.y + radius * (float)Math.sin(radians) - 910f
                 );
 
@@ -194,7 +195,15 @@ public class EnemyMermaid {
                 if (currentAngle >= 360f) {
                     currentAngle = 0f; // Reset the angle after completing a full circle
                 }
+                System.out.println(currentAngle);
                 waveCounter++;
+                break;
+            case 3:
+                projectilePosition = new Vector2 (position.x, position.y);
+                Vector2 directionToTarget = playerPos.sub(projectilePosition).nor(); // Normalized direction vector towards the target
+                projectileVelocity = new Vector2(directionToTarget.x * homingSpeed, directionToTarget.y * homingSpeed); // Velocity adjusted towards the target
+                newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);
+                projectiles.add(newProjectile);
                 break;
         }
         if (MainMenu.isSFXEnabled()) {
