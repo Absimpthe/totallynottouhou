@@ -51,9 +51,9 @@ public class EnemyMermaid {
         // Enemy color variants
         switch (enemyType) {
             case 1:
+                this.tint = new Color(0.5f, 0.7f, 1f, 1f);
                 break;
             case 2:
-                this.tint = new Color(0.5f, 0.7f, 1f, 1f);
                 break;
             case 3:
                 this.tint = new Color(0.75f, 0.3f, 1f, 1f);
@@ -175,7 +175,6 @@ public class EnemyMermaid {
                 projectiles.add(newProjectile);
                 break;
             case 2:
-                System.out.println(waveCounter); // debug print statement
                 float radians = (float) Math.toRadians(currentAngle); // Convert the angle to radians
                 float radius = 40f; // Define the radius of the radial pattern
                 // Calculate the new position based on the current angle and radius

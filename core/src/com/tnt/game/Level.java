@@ -48,7 +48,7 @@ public class Level implements Screen {
 
         // Initialize stage and skin
         this.stage = new Stage();
-        Gdx.input.setInputProcessor(stage); // Set input processorr
+        Gdx.input.setInputProcessor(stage); // Set input processor
         Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
 
         // Initialize HealthStatus (Heart Images)
@@ -153,7 +153,7 @@ public class Level implements Screen {
         int enemyType;
         EnemyMermaid newEnemy = null;
         if (currentScore < 2000) {
-            newEnemy = new EnemyMermaid("mermaid.png", 1);
+            newEnemy = new EnemyMermaid("mermaid.png", 2);
         } else if (currentScore >= 2000 && currentScore < 6000) {
             spawnInterval = 6f;
             // Spawn 2 different enemy types alternately
