@@ -35,6 +35,8 @@ public class Level implements Screen {
     public int currentScore;
     private boolean toggleEnemyType = false;
     private boolean isPaused = false;
+    private int enemyTypeCounter = 0; // Class variable to keep track of enemy type to spawn
+
 
     public Level(aquamarine game) {
         this.game = game;
@@ -161,7 +163,8 @@ public class Level implements Screen {
             newEnemy = new EnemyMermaid("mermaid.png", enemyType);
             toggleEnemyType = !toggleEnemyType;
         } else if (currentScore >= 6000 && currentScore <= 20000) {
-            // difficulty increase
+            enemyTypeCounter = (enemyTypeCounter % 3) + 1; // This will cycle through 1, 2, 3, 1, 2, 3, ...
+            newEnemy = new EnemyMermaid("mermaid.png", enemyTypeCounter);
         } // add more difficulty settings here
         if (newEnemy != null) { // Verify that newEnemy is not null before spawning
             // Use the height of the first frame of the animation for initial positioning

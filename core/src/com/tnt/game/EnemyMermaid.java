@@ -51,12 +51,12 @@ public class EnemyMermaid {
         // Enemy color variants
         switch (enemyType) {
             case 1:
-                this.tint = new Color(0.5f, 0.7f, 1f, 1f);
+                this.tint = new Color(0.5f, 1f, 0.6f, 1f);
                 break;
             case 2:
                 break;
             case 3:
-                this.tint = new Color(0.75f, 0.3f, 1f, 1f);
+                this.tint = new Color(0.8f, 0.5f, 0.3f, 1f);
                 break;
             default:
                 this.tint = Color.WHITE;
