@@ -37,7 +37,6 @@ public class Level implements Screen {
     private boolean isPaused = false;
     private int enemyTypeCounter = 0; // Class variable to keep track of enemy type to spawn
 
-
     public Level(aquamarine game) {
         this.game = game;
         // Load the sprite
@@ -233,7 +232,6 @@ public class Level implements Screen {
         bgbatch.begin();
         ParallaxBG.render(bgbatch);
         bgbatch.end();
-        
         if (!isPaused) {
             // Game update and logic
             batch.begin();
