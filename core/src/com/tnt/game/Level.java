@@ -1,5 +1,6 @@
 package com.tnt.game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -50,7 +51,6 @@ public class Level implements Screen {
 
         // Initialize stage and skin
         this.stage = new Stage();
-        Gdx.input.setInputProcessor(stage); // Set input processor
         Skin skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
 
         // Initialize HealthStatus (Heart Images)
@@ -60,7 +60,12 @@ public class Level implements Screen {
         gameStatus.addToStage(stage); // Add the setting button to the stage
 
         this.gameScore = new GameScore(stage, skin);
-        gameScore.addToStage((stage));
+        gameScore.addToStage(stage);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage); // Make sure the stage is added to receive input
+        multiplexer.addProcessor(gameStatus); // Add gameStatus if it needs to process input too
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     private void checkCollisions() {
@@ -180,6 +185,7 @@ public class Level implements Screen {
         }
     }
 
+    
     public void togglePause() {
         isPaused = !isPaused;
     }    
