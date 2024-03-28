@@ -194,7 +194,6 @@ public class EnemyMermaid {
                 if (currentAngle >= 360f) {
                     currentAngle = 0f; // Reset the angle after completing a full circle
                 }
-                System.out.println(currentAngle);
                 waveCounter++;
                 break;
             case 3:
