@@ -246,7 +246,7 @@ public class Level implements Screen {
         // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // Render parallax background
-        ParallaxBG.update(delta);
+        ParallaxBG.update(delta, gameSpeed);
         bgbatch.begin();
         ParallaxBG.render(bgbatch);
         bgbatch.end();

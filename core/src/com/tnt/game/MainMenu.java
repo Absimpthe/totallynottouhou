@@ -43,9 +43,9 @@ public class MainMenu implements Screen {
     public void show() {
         bgbatch = new SpriteBatch();
         ParallaxBG = new Parallax();
-        ParallaxBG.addLayer(new Texture("far.png"), 30f); // Farthest layer
-        ParallaxBG.addLayer(new Texture("sand.png"), 60f); // Middle layer
-        ParallaxBG.addLayer(new Texture("foreground-merged.png"), 90f);   // Closest layer
+        ParallaxBG.addLayer(new Texture("far.png"), 50f); // Farthest layer
+        ParallaxBG.addLayer(new Texture("sand.png"), 70f); // Middle layer
+        ParallaxBG.addLayer(new Texture("foreground-merged.png"), 100f);   // Closest layer
 
         batch = new SpriteBatch();
         stage = new Stage();
@@ -239,7 +239,7 @@ public class MainMenu implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        ParallaxBG.update(delta);
+        ParallaxBG.update(delta, 1.0f);
         bgbatch.begin();
         ParallaxBG.render(bgbatch);
         bgbatch.end();

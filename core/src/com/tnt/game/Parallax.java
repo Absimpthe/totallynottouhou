@@ -20,7 +20,6 @@ public class Parallax {
     }
 
     private ArrayList<ParallaxLayer> layers;
-    private float elapsedTime = 0; // Keep track of elapsed time
 
     public Parallax() {
         layers = new ArrayList<ParallaxLayer>();
@@ -30,11 +29,10 @@ public class Parallax {
         layers.add(new ParallaxLayer(texture, speed));
     }
 
-    public void update(float delta) {
-        elapsedTime += delta;
+    public void update(float delta, float gameSpeed) {
         for (ParallaxLayer layer : layers) {
             // Update layer position based on its speed and elapsed time
-            layer.position += layer.speed * delta;
+            layer.position += layer.speed * delta * gameSpeed;
             // Reset position to loop the background
             if (layer.position > Gdx.graphics.getWidth()) {
                 layer.position = 0;
