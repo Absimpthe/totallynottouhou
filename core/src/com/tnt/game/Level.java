@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,6 +38,9 @@ public class Level implements Screen {
     private boolean toggleEnemyType = false;
     private boolean isPaused = false;
     private int enemyTypeCounter = 0; // Class variable to keep track of enemy type to spawn
+    private float gameSpeed = 1.0f;
+    private float speedIncreaseInterval = 10.0f; // Time in seconds after which to increase the speed
+    private float lastSpeedIncreaseTime = 0.0f; // Track the last time the speed was increased
 
     public Level(aquamarine game) {
         this.game = game;
@@ -65,6 +69,14 @@ public class Level implements Screen {
         multiplexer.addProcessor(stage); // Make sure the stage is added to receive input
         multiplexer.addProcessor(gameStatus); // Add gameStatus if it needs to process input too
         Gdx.input.setInputProcessor(multiplexer);
+    }
+
+    private void updateGameSpeed() {
+        // Increase gameSpeed at regular intervals
+        if (TimeUtils.nanoTime() - lastSpeedIncreaseTime > speedIncreaseInterval * 1000000000) { // Convert seconds to nanoseconds
+            gameSpeed += 0.01f; // Increase the speed by 1%
+            lastSpeedIncreaseTime = TimeUtils.nanoTime();
+        }
     }
 
     private void checkCollisions() {
@@ -128,17 +140,17 @@ public class Level implements Screen {
         }
     }
 
-    public void updateSpawn(float deltaTime, GameScore gameScore) {
+    public void updateSpawn(float deltaTime, GameScore gameScore, float gameSpeed) {
         Vector2 playerPos = player.getPlayerPos();
         currentScore = gameScore.getScore();
         // Update spawn timer
         spawnTimer += deltaTime;
+        float dynamicSpawnInterval = Math.max(1f, spawnInterval / gameSpeed); // Prevent the interval from becoming too short
         // Check if it's time to spawn a new enemy
-        if (spawnTimer >= spawnInterval) {
+        if (spawnTimer >= dynamicSpawnInterval) {
             spawnEnemy(currentScore);
             spawnTimer = 0; // Reset the spawn timer
         }
-
         Iterator<EnemyMermaid> iterator = enemies.iterator();
         while (iterator.hasNext()) {
             EnemyMermaid enemy = iterator.next();
@@ -166,10 +178,10 @@ public class Level implements Screen {
             enemyType = toggleEnemyType ? 2 : 1;
             newEnemy = new EnemyMermaid("mermaid.png", enemyType);
             toggleEnemyType = !toggleEnemyType;
-        } else if (currentScore >= 6000 && currentScore <= 20000) {
+        } else {
             enemyTypeCounter = (enemyTypeCounter % 3) + 1; // This will cycle through 1, 2, 3, 1, 2, 3, ...
             newEnemy = new EnemyMermaid("mermaid.png", enemyTypeCounter);
-        } // add more difficulty settings here
+        }
         if (newEnemy != null) { // Verify that newEnemy is not null before spawning
             // Use the height of the first frame of the animation for initial positioning
             float enemyHeight = newEnemy.mermaidAnimation.getKeyFrames()[0].getRegionHeight();
@@ -240,12 +252,13 @@ public class Level implements Screen {
         bgbatch.end();
         if (!isPaused) {
             // Game update and logic
+            updateGameSpeed();
             batch.begin();
             player.draw(batch);
             draw(batch);
             batch.end();
             player.update(delta);
-            updateSpawn(delta, gameScore);
+            updateSpawn(delta, gameScore, gameSpeed);
 
             // Debugging hitboxes (consider moving this outside the if statement if you want it to show during pause)
             player.drawHitbox();
