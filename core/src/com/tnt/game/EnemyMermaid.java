@@ -101,7 +101,7 @@ public class EnemyMermaid {
         while (iterator.hasNext()) {
             BubbleProjectile projectile = iterator.next();
             // First, update the projectile's state for this frame
-            projectile.updateProjectile(deltaTime);
+            projectile.updateProjectile(deltaTime, playerPos);
 
             // Then, check if the projectile has moved off-screen after the update
             if (isProjectileOffScreen(projectile)) {
@@ -127,7 +127,7 @@ public class EnemyMermaid {
             case 2:
                 return 0.3f;
             case 3:
-                return 0.75f;
+                return 3.0f;
             default:
                 return 1.0f;
         }
@@ -197,7 +197,7 @@ public class EnemyMermaid {
                 waveCounter++;
                 break;
             case 3:
-                projectilePosition = new Vector2 (position.x, position.y);
+                projectilePosition = new Vector2 (position.x - 900f, position.y - 910f);
                 Vector2 directionToTarget = playerPos.sub(projectilePosition).nor(); // Normalized direction vector towards the target
                 projectileVelocity = new Vector2(directionToTarget.x * homingSpeed, directionToTarget.y * homingSpeed); // Velocity adjusted towards the target
                 newProjectile = new BubbleProjectile(projectilePosition, projectileVelocity, projectileTexture, type);

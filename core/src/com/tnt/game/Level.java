@@ -74,7 +74,7 @@ public class Level implements Screen {
     private void updateGameSpeed() {
         // Increase gameSpeed at regular intervals
         if (TimeUtils.nanoTime() - lastSpeedIncreaseTime > speedIncreaseInterval * 1000000000) { // Convert seconds to nanoseconds
-            gameSpeed += 0.01f; // Increase the speed by 1%
+            gameSpeed += 0.05f; // Increase the speed by 1%
             lastSpeedIncreaseTime = TimeUtils.nanoTime();
         }
     }
@@ -172,8 +172,7 @@ public class Level implements Screen {
         EnemyMermaid newEnemy = null;
         if (currentScore < 2000) {
             newEnemy = new EnemyMermaid("mermaid.png", 2);
-        } else if (currentScore >= 2000 && currentScore < 6000) {
-            spawnInterval = 6f;
+        } else if (currentScore >= 2000 && currentScore < 3000) {
             // Spawn 2 different enemy types alternately
             enemyType = toggleEnemyType ? 2 : 1;
             newEnemy = new EnemyMermaid("mermaid.png", enemyType);

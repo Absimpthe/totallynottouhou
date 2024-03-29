@@ -16,21 +16,17 @@ public class BubbleProjectile {
     private final float amplitude; // Amplitude of the sine wave
     private final float frequency; // Frequency of the sine wave
     private float baseX; // Base horizontal position
-    private float baseY;
     public boolean isVisible = true;
     private int type;
-    private float angle = 0; // This will keep increasing to move in a spiral
-    private float spiralRadius = 0; // Start with a small radius and increase it to expand the spiral
-    private float spiralSpeed = 1.5f;
-    private float spiralExpansionRate = 3f;
+    private float homingSpeed = 300f;
+    private float homingTimeElapsed = 0f;
 
     public BubbleProjectile(Vector2 position, Vector2 velocity, Texture texture, int enemytype) {
         this.shapeRenderer = new ShapeRenderer();
         this.type = enemytype;
-        this.amplitude = 5f;
+        this.amplitude = 6f;
         this.frequency = 0.01f;
         this.baseX = position.x; // Store the initial horizontal position
-        this.baseY = position.y; // Store the initial vertical position
         this.velocity = velocity;
         this.sprite = new Sprite(texture); // Create a sprite from the texture
         this.sprite.setPosition(position.x, position.y); // Set the sprite's position
@@ -44,7 +40,7 @@ public class BubbleProjectile {
                 sprite.getHeight() * sprite.getScaleY() // Height
         );
     }
-    public void updateProjectile(float deltaTime) {
+    public void updateProjectile(float deltaTime, Vector2 playerPos) {
         // Move horizontally based on velocity
         baseX += velocity.x * deltaTime;
         switch (type) {
@@ -62,15 +58,20 @@ public class BubbleProjectile {
                 sprite.setPosition(newX2, newY2);
                 break;
             case 3:
-                // Update the angle to keep the projectile moving
-                angle += deltaTime * spiralSpeed; // spiralSpeed controls the rotation speed of the spiral
-                // Update the radius to expand the spiral
-                spiralRadius += deltaTime * spiralExpansionRate; // spiralExpansionRate controls how quickly the spiral expands
-                // Calculate the new position using polar coordinates (r, theta) and convert them to Cartesian coordinates (x, y)
-                float updatedX = baseX + spiralRadius * (float)Math.cos(angle);
-                float updatedY = baseY + spiralRadius * (float)Math.sin(angle);
-                // Set the projectile's position to the new calculated position
-                sprite.setPosition(updatedX, updatedY);
+                if (homingTimeElapsed < 2.0f) {
+                    Vector2 targetPos = new Vector2(playerPos.x - 400f, playerPos.y - 700f);
+                    Vector2 currentPosition = new Vector2(sprite.getX(), sprite.getY());
+                    Vector2 directionToTarget = targetPos.sub(currentPosition).nor(); // Calculate the normalized direction vector towards the target
+
+                    // Update velocity to move towards the target
+                    velocity.x = directionToTarget.x * homingSpeed; // homingSpeed controls how fast the projectile moves
+                    velocity.y = directionToTarget.y * homingSpeed;
+                    homingTimeElapsed += deltaTime;
+                }
+                // Use the updated velocity to calculate the new position
+                float newX3 = sprite.getX() + velocity.x * deltaTime;
+                float newY3 = sprite.getY() + velocity.y * deltaTime;
+                sprite.setPosition(newX3, newY3);
                 break;
             default:
                 break;
