@@ -41,6 +41,8 @@ public class Player {
     private Level level;
     public boolean playerIsDead = false;
     public int score = 0;
+    public boolean isHit;
+    private float hitTimer;
 
     public Player(String textureFileName, aquamarine game) {
         this.game = game;
@@ -114,6 +116,8 @@ public class Player {
 
     public float takeDamage(float damage) {
         currentHp -= damage; // Decrease HP by damage taken
+        isHit = true;
+        playerSprite.setColor(Color.RED); // Change color to red
         if (currentHp <= 0) {
             currentHp = 0; // Ensure HP doesn't go below 0
             if (MainMenu.isSFXEnabled()) {
@@ -218,6 +222,15 @@ public class Player {
                 projectile.draw(batch);
             }
         }
+        if (isHit) {
+            hitTimer += Gdx.graphics.getDeltaTime();
+            if (hitTimer >= 0.5f) { // Half-second duration
+                hitTimer = 0;
+                isHit = false;
+                playerSprite.setColor(Color.WHITE); // Reset color to white
+            }
+        }
+
         if (isExploding) {
             batch.draw(explosionAnimation.getKeyFrame(explosionTimer),
                     playerSprite.getX() + 380f, playerSprite.getY() + 25f);
