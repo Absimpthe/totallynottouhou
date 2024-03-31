@@ -43,6 +43,7 @@ public class Player {
     public int score = 0;
     public boolean isHit;
     private float hitTimer;
+    private float hitDuration = 0.5f; // Time Sprite changes color for upon being hit 
 
     public Player(String textureFileName, aquamarine game) {
         this.game = game;
@@ -224,7 +225,7 @@ public class Player {
         }
         if (isHit) {
             hitTimer += Gdx.graphics.getDeltaTime();
-            if (hitTimer >= 0.5f) { // Half-second duration
+            if (hitTimer >= hitDuration) {
                 hitTimer = 0;
                 isHit = false;
                 playerSprite.setColor(Color.WHITE); // Reset color to white
