@@ -38,12 +38,12 @@ public class Player {
     private SpriteBatch batch;
     private Texture blackTexture;
     private boolean isFading;
-    private Level level;
     public boolean playerIsDead = false;
     public int score = 0;
     public boolean isHit = false;  // Initialized as false
+    private final Sound hitSound;
     private float hitTimer;
-    private float hitDuration = 0.5f; // Time Sprite changes color for upon being hit 
+    private final float hitDuration = 0.5f; // Time Sprite changes color for upon being hit
 
     public Player(String textureFileName, aquamarine game) {
         this.game = game;
@@ -63,6 +63,7 @@ public class Player {
         this.maxHp = 300f;
         this.currentHp = maxHp;
         this.explosionSound = Gdx.audio.newMusic(Gdx.files.internal("explosionSound.wav"));
+        this.hitSound = Gdx.audio.newSound(Gdx.files.internal("hitSound.mp3"));
 
         // Shape renderer used for debugging
         this.shapeRenderer = new ShapeRenderer();
@@ -226,6 +227,7 @@ public class Player {
             }
         }
         if (isHit) {
+            hitSound.play(0.5f);
             hitTimer += Gdx.graphics.getDeltaTime();
             if (hitTimer >= hitDuration) {
                 hitTimer = 0;

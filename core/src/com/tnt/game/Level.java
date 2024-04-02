@@ -259,14 +259,14 @@ public class Level implements Screen {
             player.update(delta);
             updateSpawn(delta, gameScore, gameSpeed);
 
-            // Debugging hitboxes (consider moving this outside the if statement if you want it to show during pause)
-            player.drawHitbox();
-            for (EnemyMermaid enemy : enemies) {
-                enemy.drawHitbox();
-                for (BubbleProjectile projectile : enemy.getProjectiles()) {
-                    projectile.drawHitbox();
-                }
-            }
+            // Debugging hitboxes
+//            player.drawHitbox();
+//            for (EnemyMermaid enemy : enemies) {
+//                enemy.drawHitbox();
+//                for (BubbleProjectile projectile : enemy.getProjectiles()) {
+//                    projectile.drawHitbox();
+//                }
+//            }
         }
 
         // Fade-in effect (consider if this should be outside the pause logic)
