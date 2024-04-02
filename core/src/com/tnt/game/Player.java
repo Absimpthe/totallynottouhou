@@ -41,7 +41,7 @@ public class Player {
     private Level level;
     public boolean playerIsDead = false;
     public int score = 0;
-    public boolean isHit;
+    public boolean isHit = false;  // Initialized as false
     private float hitTimer;
     private float hitDuration = 0.5f; // Time Sprite changes color for upon being hit 
 
@@ -116,15 +116,17 @@ public class Player {
     }
 
     public float takeDamage(float damage) {
-        currentHp -= damage; // Decrease HP by damage taken
-        isHit = true;
-        playerSprite.setColor(Color.RED); // Change color to red
-        if (currentHp <= 0) {
-            currentHp = 0; // Ensure HP doesn't go below 0
-            if (MainMenu.isSFXEnabled()) {
-                explosionSound.play();
+        if(isHit == false){
+            currentHp -= damage; // Decrease HP by damage taken
+            isHit = true;
+            playerSprite.setColor(Color.RED); // Change color to red
+            if (currentHp <= 0) {
+                currentHp = 0; // Ensure HP doesn't go below 0
+                if (MainMenu.isSFXEnabled()) {
+                    explosionSound.play();
+                }
+                onPlayerDeath();
             }
-            onPlayerDeath();
         }
         return currentHp;
     }
