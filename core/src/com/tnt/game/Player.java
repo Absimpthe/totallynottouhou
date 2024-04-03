@@ -41,7 +41,7 @@ public class Player {
     public boolean playerIsDead = false;
     public int score = 0;
     public boolean isHit = false;  // Initialized as false
-    private final Sound hitSound;
+    private final Music hitSound;
     private float hitTimer;
     private final float hitDuration = 0.5f; // Time Sprite changes color for upon being hit
 
@@ -63,7 +63,7 @@ public class Player {
         this.maxHp = 300f;
         this.currentHp = maxHp;
         this.explosionSound = Gdx.audio.newMusic(Gdx.files.internal("explosionSound.wav"));
-        this.hitSound = Gdx.audio.newSound(Gdx.files.internal("hitSound.mp3"));
+        this.hitSound = Gdx.audio.newMusic(Gdx.files.internal("hitSound.mp3"));
 
         // Shape renderer used for debugging
         this.shapeRenderer = new ShapeRenderer();
@@ -227,7 +227,7 @@ public class Player {
             }
         }
         if (isHit) {
-            hitSound.play(0.5f);
+            hitSound.play();
             hitTimer += Gdx.graphics.getDeltaTime();
             if (hitTimer >= hitDuration) {
                 hitTimer = 0;
