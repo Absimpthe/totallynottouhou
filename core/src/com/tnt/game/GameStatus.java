@@ -28,6 +28,7 @@ public class GameStatus implements InputProcessor {
     private Music levelbgm;
     private Level level;
     private Skin skin;
+    private Dialog optionsDialog;
     
     public void setLevelBGM(Music levelbgm) {
         this.levelbgm = levelbgm;
@@ -39,8 +40,77 @@ public class GameStatus implements InputProcessor {
         this.skin = skin;
         setupSettingsButton();
         
+        initializeOptionsDialog(); 
+        setupSettingsButton(); 
+        if (optionsDialog == null) {
+            Gdx.app.log("GameStatus", "Constructor: optionsDialog is null");
+        }
         Gdx.input.setInputProcessor(this);
     }
+
+    // public void pauseGame() {
+    //     level.togglePause();
+    //     showDialog();
+    // }
+    
+    // // Method to handle game resume
+    // public void resumeGame() {
+    //     level.togglePause();
+    //     hideDialog();
+    // }
+    
+    // // Method to show the options dialog
+    // private void showDialog() {
+    //     optionsDialog.show(stage);
+    //     optionsDialog.setVisible(true);
+    // }
+
+    public void pauseGame() {
+        Gdx.app.log("GameStatus", "Pausing game");
+        level.togglePause();
+        showDialog();
+    }
+    
+    public void resumeGame() {
+        Gdx.app.log("GameStatus", "Resuming game");
+        level.togglePause();
+        hideDialog();
+    }
+
+    private void hideDialog() {
+        if (optionsDialog != null) {
+            optionsDialog.hide();
+            optionsDialog.setVisible(false);
+        } else {
+            Gdx.app.log("GameStatus", "Attempt to hide dialog failed: optionsDialog is null");
+        }
+    }
+    
+    private void showDialog() {
+        if (optionsDialog != null && stage != null) {
+            optionsDialog.show(stage);
+            optionsDialog.setVisible(true);
+        } else {
+            Gdx.app.log("GameStatus", "Dialog or stage is null");
+        }
+    }
+    
+    // public void showDialog() {
+    //     Gdx.app.log("GameStatus", "Showing dialog");
+    //     if (optionsDialog != null && stage != null) {
+    //         optionsDialog.show(stage);
+    //         optionsDialog.setVisible(true);
+    //     } else {
+    //         Gdx.app.log("GameStatus", "Dialog or Stage is null");
+    //     }
+    // }
+    
+    
+    // // Method to hide the options dialog
+    // private void hideDialog() {
+    //     optionsDialog.hide();
+    //     optionsDialog.setVisible(false);
+    // }
 
     public void setupSettingsButton() {
         Texture settingsTexture = new Texture(Gdx.files.internal("settingsicon.png"));
@@ -51,17 +121,20 @@ public class GameStatus implements InputProcessor {
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                pauseGame();
+                if (level.isPaused()) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
             }
         });
     }
         
-
-    public void pauseGame() {
-            level.togglePause();
-
-            Dialog optionsDialog = new Dialog("", skin);
+    
+    private void initializeOptionsDialog() {
+            optionsDialog = new Dialog("", skin);
             optionsDialog.text("Choose an option");
+            optionsDialog.pad(10);
 
             // -------------------------------
             // Add the "Resume" button 
@@ -212,20 +285,26 @@ public class GameStatus implements InputProcessor {
                     optionsDialog.hide();
                 }
             });
-            optionsDialog.show(stage).pad(0);
-            optionsDialog.pack(); // Size the dialog based on its contents
+   
+
+            optionsDialog.setVisible(false); // Start hidden
             // Center the dialog
             float posX = (Gdx.graphics.getWidth() - optionsDialog.getWidth()) / 2;
             float posY = (Gdx.graphics.getHeight() - optionsDialog.getHeight()) / 2;
             optionsDialog.setPosition(posX, posY - 50);
             // optionsDialog.setPosition(posX , posY );
             optionsDialog.setSize(420, 500);
+            
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.SPACE) {
-            pauseGame(); // Pause the game when the space bar is pressed
+            if (level.isPaused()) {
+                resumeGame();
+            } else {
+                pauseGame();
+            }
             return true;
         }
         return false;

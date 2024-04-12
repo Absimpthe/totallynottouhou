@@ -199,6 +199,9 @@ public class Level implements Screen {
     public void togglePause() {
         isPaused = !isPaused;
     }    
+    public boolean isPaused() {
+        return isPaused;
+    }
 
     public void draw(SpriteBatch batch) {
         // Draw all enemies
